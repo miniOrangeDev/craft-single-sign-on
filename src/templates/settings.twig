@@ -1,0 +1,97 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * craft-single-sign-on plugin for Craft CMS 3.x
+ *
+ * craft-single-sign-on Settings.twig
+ *
+ * @author    miniorange
+ * @copyright Copyright (c) 2022 miniorange
+ * @link      https://github.com/miniorangedev
+ * @package   Craftsinglesignon
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("miniorangedev\\craftsinglesignon\\assetbundles\\craftsinglesignon\\CraftsinglesignonAsset") %}
+
+{{ forms.textField({
+    label: 'App Provider',
+    instructions: '',
+    id: 'app_provider',
+    name: 'app_provider',
+    value: settings['app_provider']})
+}}
+{{ forms.textField({
+    label: 'Client ID',
+    instructions: '',
+    id: 'client_id',
+    name: 'client_id',
+    value: settings['client_id']})
+}}
+{{ forms.textField({
+    label: 'Client Secret',
+    instructions: '',
+    id: 'client_secret',
+    name: 'client_secret',
+    value: settings['client_secret']})
+}}
+{{ forms.textField({
+    label: 'Scope',
+    instructions: '',
+    id: 'scope',
+    name: 'scope',
+    value: settings['scope']})
+}}
+{{ forms.textField({
+    label: 'Authorization URL',
+    instructions: '',
+    id: 'authorization_url',
+    name: 'authorization_url',
+    value: settings['authorization_url']})
+}}
+{{ forms.textField({
+    label: 'Oauth token API',
+    instructions: '',
+    id: 'oauth_token_api',
+    name: 'oauth_token_api',
+    value: settings['oauth_token_api']})
+}}
+{{ forms.textField({
+    label: 'User info API',
+    instructions: '',
+    id: 'user_info_api',
+    name: 'user_info_api',
+    value: settings['user_info_api']})
+}}
+{{ forms.textField({
+    label: 'Username Attribute',
+    instructions: '',
+    id: 'username_attribute',
+    name: 'username_attribute',
+    value: settings['username_attribute']})
+}}
+{{ forms.textField({
+    label: 'Email Attribute',
+    instructions: '',
+    id: 'email_attribute',
+    name: 'email_attribute',
+    value: settings['email_attribute']})
+}}
+{{ forms.textField({
+    label: 'Callback URL',
+    instructions: '',
+    id: 'callback_url',
+    name: 'callback_url',
+    value: siteUrl(settings['callback_url'])})
+}}
+{{ forms.textField({
+    label: '',
+    instructions: '',
+    type: 'hidden',
+    id: 'noreg',
+    name: 'noreg',
+    value: '10'})
+}}

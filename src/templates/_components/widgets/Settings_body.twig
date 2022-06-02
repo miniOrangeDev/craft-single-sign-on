@@ -1,0 +1,20 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * craft-single-sign-on plugin for Craft CMS
+ *
+ * Settings Widget Body
+ *
+ * @author    miniorange
+ * @copyright Copyright (c) 2022 miniorange
+ * @link      https://github.com/miniorangedev
+ * @package   Craftsinglesignon
+ * @since     1.0.0
+ */
+#}
+
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@miniorangedev/craftsinglesignon/assetbundles/settingswidget/dist', true) ~ '/img/Settings-icon.svg' %}
+
+<img src="{{ iconUrl }}" height="64" width="64" />
+
+<p>{{ message }}</p>

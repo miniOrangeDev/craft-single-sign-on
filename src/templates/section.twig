@@ -1,0 +1,46 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * craft-single-sign-on plugin for Craft CMS 3.x
+ *
+ * craft-single-sign-on index.twig
+ *
+ * @author    miniorange
+ * @copyright Copyright (c) 2022 miniorange
+ * @link      https://github.com/miniorangedev
+ * @package   Craftsinglesignon
+ * @since     1.0.0
+ */
+#}
+
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("miniorangedev\\craftsinglesignon\\assetbundles\\craftsinglesignon\\CraftsinglesignonAsset") %}
+{% do view.registerAssetBundle("miniorangedev\\craftsinglesignon\\assetbundles\\sectioncpsection\\SectionCPSectionAsset") %}
+
+{# Link for the ? icon at the bottom of the page #}
+{% set docsUrl = "https://github.com/miniOrangeDev/craft-single-sign-on/blob/master/README.md" %}
+
+{# The title of this CP section #}
+{% set title = "craft-single-sign-on" %}
+
+{# The URL to this plugin's base CP section #}
+{% set pluginCpUrl = url('craft-single-sign-on') %}
+
+{# Get a URL to an image in our AssetBundle #}
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@miniorangedev/craftsinglesignon/assetbundles/sectioncpsection/dist', true) ~ '/img/Section-icon.svg' %}
+
+{# Content that should appear in the page header#}
+{% set extraPageHeaderHtml %}
+    <div class="buttons">
+        <a href="{{ pluginCpUrl }}" class="btn submit add icon">{{ "Click Me!"|t('craft-single-sign-on') }}</a>
+    </div>
+{% endset %}
+
+{# The content of the CP Section#}
+{% set content %}
+    <h2>{{ "Section CP Section body goes here"|t('craft-single-sign-on') }}</h2>
+    <img src="{{ iconUrl }}" height="64" width="64" />
+    <p class="textline"></p>
+{% endset %}

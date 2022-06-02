@@ -1,0 +1,49 @@
+{
+    "name": "miniorangedev/craft-single-sign-on",
+    "description": "Craft Single Sign-On OAuth & OpenID Connect plugin allows unlimited sso / login ( Single Sign On ) with your Azure AD, Discord, G Suite / Google Apps or other custom OAuth 2.0, OpenID Connect providers.",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "SSO",
+        "single-sign-on",
+        "SAML",
+        "OAuth",
+        "JWT"
+    ],
+    "support": {
+        "docs": "https://github.com/miniOrangeDev/craft-single-sign-on/blob/master/README.md",
+        "issues": "https://github.com/miniOrangeDev/craft-single-sign-on/issues"
+    },
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "miniorange",
+            "homepage": "https://github.com/miniorangedev"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0"
+    },
+    "require-dev": {
+      "craftcms/cms": "^3.2.0",
+      "codeception/codeception": "^3.0",
+      "vlucas/phpdotenv": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+          "miniorangedev\\craftsinglesignon\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "single-sign-on",
+        "handle": "craft-single-sign-on",
+        "developer": "miniorange",
+        "developerUrl": "https://github.com/miniorangedev",
+        "documentationUrl": "https://github.com/miniOrangeDev/craft-single-sign-on/blob/master/README.md",
+        "changelogUrl": "https://raw.githubusercontent.com/miniOrangeDev/craft-single-sign-on/master/CHANGELOG.md",
+        "components": {
+            "app": "miniorangedev\\craftsinglesignon\\services\\App"
+        },
+        "class": "miniorangedev\\craftsinglesignon\\Craftsinglesignon"
+    }
+}

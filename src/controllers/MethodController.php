@@ -61,15 +61,8 @@ class MethodController extends Controller
      */
     public function actionXhjsdop($user_info, $adff)
     {
-        $user_info = User::find()->all();
-        $orede = 0;
         $saff = base64_encode($adff);
-
-            foreach($user_info as $info){
-                if(isset($info->slug) && $info->slug == "mologin"){
-                    $orede++;
-                }
-            }
+        $orede = count(User::find()->slug("mologin")->all());
 
         return ResourcesController::actionPtrriejj($orede, $saff);
     }

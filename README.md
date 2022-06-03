@@ -18,7 +18,7 @@ To install the plugin, follow these instructions.
 
 2. Then tell Composer to load the plugin:
 
-        composer require miniorange/single-sign-on
+        composer require miniorangedev/craft-single-sign-on
 
 3. In the Control Panel, go to Settings → Plugins and click the “Install” button for single-sign-on.
 
@@ -31,7 +31,7 @@ Enable Seamless Single Sign On (SSO) Login for your Craft CMS based website usin
 Just a couple of lines on your Login twig template and Users will be able to SSO on one click.
 Copy and Paste the following code into the required .twig file.
 ```html
-<a href="{{ craft.singlesignon.loginUrl() }}">Login with miniorange</a>
+<a href="{{ craft.craftsinglesignon.loginUrl() }}">Login with miniorange</a>
 ```
 
 

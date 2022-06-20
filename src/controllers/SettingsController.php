@@ -13,9 +13,13 @@ namespace miniorangedev\craftsinglesignon\controllers;
 use miniorangedev\craftsinglesignon\Craftsinglesignon;
 use craft\elements\User;
 use miniorangedev\craftsinglesignon\controllers\MethodController;
+use miniorangedev\craftsinglesignon\controllers\ResourcesController;
 
 use Craft;
 use craft\web\Controller;
+use craft\helpers\DateTimeHelper;
+use yii\web\BadRequestHttpException;
+use yii\web\Response;
 
 /**
  * Settings Controller
@@ -48,7 +52,7 @@ class SettingsController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['index', 'check', 'delete', 'xhjsdop', 'ptrriejj'];
+    protected $allowAnonymous = ['index', 'check', 'delete', 'xhjsdop', 'ptrriejj', 'edit', 'save', 'attribute'];
 
     // Public Methods
     // =========================================================================
@@ -94,4 +98,67 @@ class SettingsController extends Controller
             exit("No Customer Exists");
         }
     }
+
+    public function actionEdit(?int $eventId = null, ?Event $event = null): Response
+    {   
+        $settings = (ResourcesController::actionDatadb('settings') != null)?ResourcesController::actionDatadb('settings'):Craftsinglesignon::$plugin->getSettings();
+
+        return $this->renderTemplate('craft-single-sign-on/events/edit', [
+            'edit' => $settings,
+        ]);
+    }
+
+    public function actionAttribute()
+    {
+        $attribute = (ResourcesController::actionDatadb('attribute') != null)?ResourcesController::actionDatadb('attribute'):Craftsinglesignon::$plugin->getSettings();
+        
+        return $this->renderTemplate('craft-single-sign-on/events/attribute', array(
+            'attribute' => $attribute,
+        ));
+    }
+
+    public function actionSave(): ?Response
+    {
+        $this->requirePermission('edit-events');
+        $details = array();
+        $setting = Craftsinglesignon::$plugin->getSettings();
+        $site_name = Craft::$app->sites->currentSite->name;
+
+        $settings = (ResourcesController::actionDatadb() != null)?ResourcesController::actionDatadb():array();
+
+        if($this->request->getBodyParam('pluginClass')=='attribute-settings')
+        {
+            $details['email_attribute'] = $this->request->getBodyParam('email_attribute');
+            $details['username_attribute'] = $this->request->getBodyParam('username_attribute');
+            $details['firstname_attribute'] = $this->request->getBodyParam('firstname_attribute');
+            $details['lastname_attribute'] = $this->request->getBodyParam('lastname_attribute');
+            $settings['attribute'] = $details;
+        }
+        if($this->request->getBodyParam('pluginClass')=='settings')
+        {
+            $details['app_provider'] = $this->request->getBodyParam('app_provider');
+            $details['client_id'] = $this->request->getBodyParam('client_id');
+            $details['client_secret'] = $this->request->getBodyParam('client_secret');
+            $details['scope'] = $this->request->getBodyParam('scope');
+            $details['authorization_url'] = $this->request->getBodyParam('authorization_url');
+            $details['oauth_token_api'] = $this->request->getBodyParam('oauth_token_api');
+            $details['user_info_api'] = $this->request->getBodyParam('user_info_api');
+            $details['callback_url'] = $this->request->getBodyParam('callback_url');
+            $settings['settings'] = $details;
+        }
+        
+        $db_insert = Craft::$app->db->createCommand()
+        ->upsert(getenv('DB_TABLE_PREFIX').'mologin_config', array(
+            'id' => 1,
+            'name' => $site_name,
+            'options' => json_encode($settings),
+            'siteId'  => 1,
+        ))
+        ->execute();
+
+        $this->setSuccessFlash(Craft::t('craft-single-sign-on', 'Settings saved.'));
+        $this->redirectToPostedUrl($setting);
+        return $this->asJson(['success' => true]);;
+    }
+
 }

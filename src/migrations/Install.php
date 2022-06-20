@@ -97,20 +97,22 @@ class Install extends Migration
     {
         $tablesCreated = false;
 
-    // craftsinglesignon_config table
-        $tableSchema = Craft::$app->db->schema->getTableSchema('{{%craftsinglesignon_config}}');
+    // mologin_config table
+        $tableSchema = Craft::$app->db->schema->getTableSchema('{{%mologin_config}}');
         if ($tableSchema === null) {
             $tablesCreated = true;
             $this->createTable(
-                '{{%craftsinglesignon_config}}',
+                '{{%mologin_config}}',
                 [
                     'id' => $this->primaryKey(),
+                    'name' => $this->string(),
+                    'options' => $this->string(),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
                     'uid' => $this->uid(),
                 // Custom columns in the table
                     'siteId' => $this->integer()->notNull(),
-                    'some_field' => $this->string(255)->notNull()->defaultValue(''),
+                    // 'some_field' => $this->string(255)->notNull()->defaultValue(''),
                 ]
             );
         }
@@ -125,14 +127,14 @@ class Install extends Migration
      */
     protected function createIndexes()
     {
-    // craftsinglesignon_config table
+    // mologin_config table
         $this->createIndex(
             $this->db->getIndexName(
-                '{{%craftsinglesignon_config}}',
+                '{{%mologin_config}}',
                 'some_field',
                 true
             ),
-            '{{%craftsinglesignon_config}}',
+            '{{%mologin_config}}',
             'some_field',
             true
         );
@@ -152,10 +154,10 @@ class Install extends Migration
      */
     protected function addForeignKeys()
     {
-    // craftsinglesignon_config table
+    // mologin_config table
         $this->addForeignKey(
-            $this->db->getForeignKeyName('{{%craftsinglesignon_config}}', 'siteId'),
-            '{{%craftsinglesignon_config}}',
+            $this->db->getForeignKeyName('{{%mologin_config}}', 'siteId'),
+            '{{%mologin_config}}',
             'siteId',
             '{{%sites}}',
             'id',
@@ -180,7 +182,7 @@ class Install extends Migration
      */
     protected function removeTables()
     {
-    // craftsinglesignon_config table
-        $this->dropTableIfExists('{{%craftsinglesignon_config}}');
+    // mologin_config table
+        $this->dropTableIfExists('{{%mologin_config}}');
     }
 }

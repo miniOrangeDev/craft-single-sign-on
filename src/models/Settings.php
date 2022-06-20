@@ -42,11 +42,13 @@ class Settings extends Model
     public $client_id = 'Client ID';
     public $client_secret = 'Client Secret';
     public $scope = 'Scope';
-    public $authorization_url = 'authorization API';
+    public $authorization_url = 'Authorization API';
     public $oauth_token_api = 'Oauth token API';
     public $user_info_api = 'User info API';
     public $username_attribute = 'Username Attribute';
     public $email_attribute = 'Email Attribute';
+    public $firstname_attribute = 'Firstname Attribute';
+    public $lastname_attribute = 'Lastname Attribute';
     public $callback_url = 'mologin/callback';
     public $noreg = '10';
 

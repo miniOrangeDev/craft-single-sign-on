@@ -14,6 +14,7 @@ use miniorangedev\craftsinglesignon\Craftsinglesignon;
 use craft\helpers\UrlHelper;
 use craft\elements\User;
 use miniorangedev\craftsinglesignon\controllers\SettingsController;
+use miniorangedev\craftsinglesignon\controllers\ResourcesController;
 
 use Craft;
 use craft\web\Controller;
@@ -49,7 +50,7 @@ class LoginController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['index', 'callback'];
+    protected $allowAnonymous = ['index', 'callback', 'test_config', 'json_to_htmltable'];
 
     // Public Methods
     // =========================================================================
@@ -62,14 +63,22 @@ class LoginController extends Controller
      */
     public function actionIndex()
     {
-        $data = Craftsinglesignon::$plugin->getSettings();
-        $client_id = $data->client_id;
-        $scope = $data->scope;
-        $authorization_url = $data->authorization_url;
-        $state = $data->app_provider;
+        $alldata = ResourcesController::actionDatadb();
+        $data = isset($alldata['settings'])?$alldata['settings']:"";
+        $client_id = isset($data['client_id'])?$data['client_id']:"";
+        $scope = isset($data['scope'])?$data['scope']:"";
+        $authorization_url = isset($data['authorization_url'])?$data['authorization_url']:"";
+        $state = isset($data['app_provider'])?$data['app_provider']:"";
+        $callback_url = isset($data['callback_url'])?$data['callback_url']:"";
 
+        if(isset($_GET['test_config'])){
+            $alldata['test_config'] = 1;
+            $site_name = Craft::$app->sites->currentSite->name;
+            $db_update = Craft::$app->db->createCommand()->update('cr_mologin_config', ['options' => json_encode($alldata)], ['name' => $site_name])->execute();
+        }
+        
         if(!isset($_REQUEST['code'])){
-            $login_dialog_url = $authorization_url.'?redirect_uri=' .$data->callback_url .'&response_type=code&client_id=' .$client_id .'&scope='.$scope.'&state='.$state;
+            $login_dialog_url = $authorization_url.'?redirect_uri=' .$callback_url .'&response_type=code&client_id=' .$client_id .'&scope='.$scope.'&state='.$state;
             header('Location:'. $login_dialog_url);
             exit;
         }
@@ -85,15 +94,18 @@ class LoginController extends Controller
     {
         $user = new User;
         $code = Craft::$app->request->getQueryParam('code');
-        $data = Craftsinglesignon::$plugin->getSettings();
-        $client_id = $data->client_id;
-        $client_secret = $data->client_secret;
-        $scope = $data->scope;
-        $oauth_token_api = $data->oauth_token_api;
-        $user_info_api = $data->user_info_api;
-        $username_attribute = $data->username_attribute;
-        $email_attribute = $data->email_attribute;
-        $noreg = $data->noreg;
+        $alldata = ResourcesController::actionDatadb();
+        $data = isset($alldata['settings'])?$alldata['settings']:"";
+        $attr = isset($alldata['attribute'])?$alldata['attribute']:"";
+        $client_id = isset($data['client_id'])?$data['client_id']:"";;
+        $client_secret = isset($data['client_secret'])?$data['client_secret']:"";;
+        $scope = isset($data['scope'])?$data['scope']:"";
+        $oauth_token_api = isset($data['oauth_token_api'])?$data['oauth_token_api']:"";
+        $user_info_api = isset($data['user_info_api'])?$data['user_info_api']:"";
+        $username_attribute = isset($attr['username_attribute'])?$attr['username_attribute']:"";
+        $email_attribute = isset($attr['email_attribute'])?$attr['email_attribute']:"";
+        $noreg = isset($data['noreg'])?$data['noreg']:"";
+        $callback_url = isset($data['callback_url'])?$data['callback_url']:"";
         $grant_type = "authorization_code";
 
         $ch = curl_init($oauth_token_api);
@@ -108,10 +120,10 @@ class LoginController extends Controller
 			'Accept: application/json'
 		));
 		
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, 'redirect_uri='.urlencode($data->callback_url).'&grant_type='.$grant_type.'&client_id='.$client_id.'&client_secret='.$client_secret.'&code='.$code);
+		curl_setopt( $ch, CURLOPT_POSTFIELDS, 'redirect_uri='.urlencode($callback_url).'&grant_type='.$grant_type.'&client_id='.$client_id.'&client_secret='.$client_secret.'&code='.$code);
 		$content = curl_exec($ch);
 		
-		if(curl_error($ch)){
+        if(curl_error($ch)){
 			exit( curl_error($ch) );
 		}
 
@@ -164,6 +176,13 @@ class LoginController extends Controller
             }
         }
         
+        if(isset($alldata['test_config'])){
+            $alldata['test_config'] = null;
+            $site_name = Craft::$app->sites->currentSite->name;
+            $db_update = Craft::$app->db->createCommand()->update(getenv('DB_TABLE_PREFIX').'mologin_config', ['options' => json_encode($alldata)], ['name' => $site_name])->execute();
+            self::actionTest_config($profile_json_output);
+        }
+
         $user_info = User::find()->email($email)->all();
 
         if(isset($user_info[0]["admin"]) && $user_info[0]["admin"] == 1 ){
@@ -193,4 +212,36 @@ class LoginController extends Controller
         }
 
     }
+
+    function actionTest_config($profile_json_output){
+
+        $print = '<div style="color: #3c763d;
+            background-color: #dff0d8; padding:2%;margin-bottom:20px;text-align:center; border:1px solid #AEDB9A; font-size:18pt;">TEST SUCCESSFUL</div>
+            <div style="display:block;text-align:center;margin-bottom:1%;"><img style="width:15%;"src="/includes/images/green_check.png"></div>';
+        $print .= self::actionJson_to_htmltable($profile_json_output);
+        echo $print;
+        exit;
+    }
+    
+    function actionJson_to_htmltable($arr) {
+
+        $str = "<table border='1'><tbody>";
+        foreach ($arr as $key => $val) {
+            $str .= "<tr>";
+            $str .= "<td>$key</td>";
+            $str .= "<td>";
+            if (is_array($val)) {
+                if (!empty($val)) {
+                    $str .= self::actionJson_to_htmltable($val);
+                }
+            } else {
+                $str .= "<strong>$val</strong>";
+            }
+            $str .= "</td></tr>";
+        }
+        $str .= "</tbody></table>";
+    
+        return $str;
+    }
+
 }

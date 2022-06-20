@@ -18,6 +18,7 @@ use miniorangedev\craftsinglesignon\elements\Action as ActionElement;
 use miniorangedev\craftsinglesignon\fields\Option as OptionField;
 use miniorangedev\craftsinglesignon\utilities\Config as ConfigUtility;
 use miniorangedev\craftsinglesignon\widgets\Settings as SettingsWidget;
+use miniorangedev\craftsinglesignon\controllers\ResourcesController;
 
 use Craft;
 use craft\base\Plugin;
@@ -117,10 +118,10 @@ class Craftsinglesignon extends Plugin
             UrlManager::class,
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
-                $data = Craftsinglesignon::$plugin->getSettings();
-                if(isset($data->callback_url) && isset(explode(UrlHelper::siteUrl(), $data->callback_url)[1])){
-                    $var = explode(UrlHelper::siteUrl(), $data->callback_url)[1];
-                    $event->rules[$var] = 'craft-single-sign-on/login/callback';
+                $data = ResourcesController::actionDatadb('settings');
+                if(isset($data['callback_url']) && isset(explode(UrlHelper::siteUrl(), $data['callback_url'])[1])){
+                    $url = explode(UrlHelper::siteUrl(), $data['callback_url'])[1];
+                    $event->rules[$url] = 'craft-single-sign-on/login/callback';
                 }
                 $event->rules['mologin/login'] = 'craft-single-sign-on/login';
                 $event->rules['mosinglesignon/create'] = 'craft-single-sign-on/settings/create';
@@ -134,6 +135,8 @@ class Craftsinglesignon extends Plugin
             UrlManager::class,
             UrlManager::EVENT_REGISTER_CP_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
+                $event->rules['craft-single-sign-on'] = 'craft-single-sign-on/settings/edit';
+                $event->rules['craft-single-sign-on/attribute-settings'] = 'craft-single-sign-on/settings/attribute';
             }
         );
 
@@ -247,7 +250,7 @@ class Craftsinglesignon extends Plugin
         return Craft::$app->view->renderTemplate(
             'craft-single-sign-on/settings',
             [
-                'settings' => $this->getSettings()
+                'settings' => Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('craft-single-sign-on'))->send()
             ]
         );
     }

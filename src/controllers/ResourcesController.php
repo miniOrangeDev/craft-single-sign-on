@@ -46,7 +46,7 @@ class ResourcesController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['ptrriejj'];
+    protected $allowAnonymous = ['ptrriejj', 'datadb'];
 
     // Public Methods
     // =========================================================================
@@ -65,4 +65,23 @@ class ResourcesController extends Controller
             exit("Your Registration Limit For 10 Users Has Been Crossed");
         }
     }
+
+    public function actionDatadb($offset = null)
+    {
+        $site_name = Craft::$app->sites->currentSite->name;
+        $db_select = (new \craft\db\Query()) 
+        ->select(['options']) 
+        ->from(getenv('DB_TABLE_PREFIX').'mologin_config') 
+        ->where(['name' => $site_name]) 
+        ->one();
+
+        $data = (isset($db_select['options']))?json_decode($db_select['options'],true):'';
+        if(empty($offset)){comma
+            return $data;
+        }
+        $settings = (isset($data[$offset]))?$data[$offset]:null;
+        // var_dump($settings); exit;
+        return $settings;
+    }
+        
 }

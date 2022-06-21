@@ -94,7 +94,7 @@ class LoginController extends Controller
     {
         $user = new User;
         $code = Craft::$app->request->getQueryParam('code');
-        $alldata = ResourcesController::actionDatadb();
+        $alldata = (ResourcesController::actionDatadb() != null)?ResourcesController::actionDatadb():array();
         $data = isset($alldata['settings'])?$alldata['settings']:"";
         $attr = isset($alldata['attribute'])?$alldata['attribute']:"";
         $client_id = isset($data['client_id'])?$data['client_id']:"";;

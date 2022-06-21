@@ -76,7 +76,7 @@ class ResourcesController extends Controller
         ->one();
 
         $data = (isset($db_select['options']))?json_decode($db_select['options'],true):'';
-        if(empty($offset)){comma
+        if(empty($offset)){
             return $data;
         }
         $settings = (isset($data[$offset]))?$data[$offset]:null;

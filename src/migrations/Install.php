@@ -106,7 +106,7 @@ class Install extends Migration
                 [
                     'id' => $this->primaryKey(),
                     'name' => $this->string(),
-                    'options' => $this->string(),
+                    'options' => $this->string(255),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
                     'uid' => $this->uid(),

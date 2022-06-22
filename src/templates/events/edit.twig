@@ -81,7 +81,7 @@
 
         <div class="buttons">
             <input class="btn submit" type="submit" value="{{ 'Save'|t }}">
-            <a onclick="window.open('https://dark.io/craft2/web/mologin/login?test_config=1', '', 'width=1000,height=500')" id="test-configuration" class="btn submit">{{ 'Test Configuration'|t }}</a>
+            <a onclick="window.open('{{ siteUrl("mologin/login?test_config=1") }}', '', 'width=1000,height=500')", '', 'width=1000,height=500')" id="test-configuration" class="btn submit">{{ 'Test Configuration'|t }}</a>
         </div>
 
     </form>

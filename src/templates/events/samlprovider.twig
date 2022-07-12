@@ -1,0 +1,41 @@
+{% extends "craft-single-sign-on/_layouts/samlcp" %}
+{% import "_includes/forms" as forms %}
+
+{% set selectedTab = 'saml_provider' %}
+{% set selectedSubnavItem = 'saml_provider' %}
+
+{% set content %}
+
+    <h2>Setup Provider</h2>
+
+    <form method="post" action="" accept-charset="UTF-8" data-saveshortcut data-confirm-unload>
+
+        {{ forms.textField({
+            label: 'SAML Provider Login URL',
+            instructions: '',
+            id: 'provider_login_url',
+            name: 'provider_login_url',
+            value: siteUrl(samlprovider['provider_login_url']),
+            disabled: 'disabled'})
+        }}
+        {{ forms.textField({
+            label: 'SAML Provider Logout URL',
+            instructions: '',
+            id: 'provider_logout_url',
+            name: 'provider_logout_url',
+            value: siteUrl(samlprovider['provider_logout_url']),
+            disabled: 'disabled'})
+        }}
+        {{ forms.textareaField({
+            label: 'Metadata XML',
+            instructions: 'Share this XML with the other provider.',
+            id: 'provider_meta_data',
+            name: 'provider_meta_data',
+            value: samlprovider['provider_meta_data'],
+            rows: 10,
+            disabled: 'disabled',
+        }) }}
+
+    </form>
+
+{% endset %}

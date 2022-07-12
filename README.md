@@ -1,4 +1,4 @@
-# single-sign-on plugin for Craft CMS 3.x
+# single-sign-on plugin for Craft CMS 4.x
 
 single sign on
 
@@ -6,7 +6,7 @@ single sign on
 
 ## Requirements
 
-This plugin requires Craft CMS 3.0.0-beta.23 or later.
+This plugin requires Craft CMS 4.0.0-beta or later.
 
 ## Installation
 
@@ -31,7 +31,7 @@ Enable Seamless Single Sign On (SSO) Login for your Craft CMS based website usin
 Just a couple of lines on your Login twig template and Users will be able to SSO on one click.
 Copy and Paste the following code into the required .twig file.
 ```html
-<a href="{{ craft.craftsinglesignon.loginUrl() }}">Login with miniorange</a>
+<a href="{{ craft.craftsinglesignon.loginUrl() }}">SSO with miniOrange</a>
 ```
 
 
@@ -57,11 +57,6 @@ Configure SSO support for multiple IDPs and authenticate different types of user
 Complete website protection
 
 Restrict your website only to the users present in your IDP and block or redirect all other users to a different website. Secure your website’s content.
-
-
-## single-sign-on Roadmap
-
-Configure Google, Azure AD, Okta etc providers:
 
 * Release it
 

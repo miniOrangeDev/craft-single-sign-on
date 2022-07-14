@@ -1,6 +1,10 @@
 # Single Sign On Changelog
 
-# 4.0.0 - 2022-07-13
+# 4.0.1 - 2022-07-14
+## Fixed
+- Bug fixes
+
+## 4.0.0 - 2022-07-13
 ## Updated
 - Updated changes for craft 4
 

@@ -148,7 +148,6 @@ class MethodController extends Controller
         self::actionvalidSignature($data, $samlResponseXml);
         
         if($state == 'test_config'){
-
             self::actionTest_config($profile_output);
         }
 
@@ -160,7 +159,7 @@ class MethodController extends Controller
         
         if(empty($user_info)){
             
-            // SettingsController::actionCakdd($noreg, $user_info);
+            SettingsController::actionCakdd($noreg, $user_info);
             $user->username = $firstname;
             $user->email = $email;
             $user->active = true;
@@ -184,17 +183,9 @@ class MethodController extends Controller
 
     }
 
-    function mo_saml_is_extension_installed($extension_name) {
-        if  (in_array  ($extension_name, get_loaded_extensions())) {
-            return 1;
-        } else
-            return 0;
-    }
-
-    public function actionvalidSignature($data, $samlResponseXml){
-
+    public function actionvalidSignature($data, $samlResponseXml)
+    {
         $key = 0;
-
         $meta_data = isset($data['meta_data'])?$data['meta_data']:"";
         $site_url = (Craft::$app->version>4)?getenv('PRIMARY_SITE_URL'):getenv('PRIMARY_SITE_URL');
         $acsUrl = $site_url."/mosinglesignon/samllogin";
@@ -213,12 +204,10 @@ class MethodController extends Controller
 
                 /* Validate signature */
                 if(!empty($responseSignatureData)) {
-                    echo "1";
                     $validSignature = Utilities::processResponse($acsUrl, $certfpFromPlugin, $responseSignatureData, $samlResponse, $key, $relayState);
                 }
 
                 if(!empty($assertionSignatureData)) {
-                    echo "2";
                     $validSignature = Utilities::processResponse($acsUrl, $certfpFromPlugin, $assertionSignatureData, $samlResponse, $key, $relayState);
                 }
 
@@ -232,7 +221,6 @@ class MethodController extends Controller
 
     public function getRawThumbprint($cert)
     {
-
         $arCert = explode("\n", $cert);
         $data = '';
         $inData = false;
@@ -260,14 +248,13 @@ class MethodController extends Controller
     public function actionTest_config($profile_json_output){
 
         $print = '<div style="color: #3c763d;
-            background-color: #dff0d8; padding:2%;margin-bottom:20px;text-align:center; border:1px solid #AEDB9A; font-size:18pt;">TEST SUCCESSFUL</div>
-            <div style="display:block;text-align:center;margin-bottom:1%;"><img style="width:15%;"src="/includes/images/green_check.png"></div>';
+            background-color: #dff0d8; padding:2%;margin-bottom:20px;text-align:center; border:1px solid #AEDB9A; font-size:18pt;">TEST SUCCESSFUL</div>';
         $print .= self::actionJson_to_htmltable($profile_json_output);
         echo $print;
         exit;
     }
     
-    function actionJson_to_htmltable($arr) {
+    public function actionJson_to_htmltable($arr) {
 
         $str = "<table border='1'><tbody>";
         foreach ($arr as $key => $val) {

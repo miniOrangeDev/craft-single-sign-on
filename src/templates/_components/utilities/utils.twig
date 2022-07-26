@@ -1,0 +1,32 @@
+{% macro copyFieldContents(textId) %}
+    {% set copyButtonId = 'copy-' ~ textId %}
+    {% js %}
+        (()=>{
+            const textArea = document.querySelector('#{{ textId }}')
+            const copyBtn = document.querySelector('#{{ copyButtonId }}')
+            copyBtn.addEventListener('click', (event) => {
+                let copyTextarea = textArea;
+
+                copyTextarea.focus();
+                copyTextarea.select();
+
+                try{
+                    if(navigator.clipboard !== undefined) {
+                        navigator.clipboard.writeText(copyTextarea.value)
+                        .then(() => {
+                            Craft.cp.displayNotice('Copied to clipboard!')
+                        })
+                        .catch((error) => { alert(`Copy failed! ${error}`) })
+                    }else{
+                        let successful = document.execCommand('copy');
+                        Craft.cp.displayNotice('Copied to clipboard!');
+                    }
+                }catch(e) {
+                    alert(`copy failed ${error}`)
+                }
+            });
+        })()
+    {% endjs %}
+    <a href="javascript:void(0);" id="{{ copyButtonId }}" class="btn" data-icon="clipboard">
+    </a>
+{% endmacro %}

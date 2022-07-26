@@ -1,0 +1,54 @@
+{% extends "craft-single-sign-on/_layouts/providercp" %}
+{% import "_includes/forms" as forms %}
+
+{% set selectedTab = 'custom_provider' %}
+
+{% block content %}
+    <div class="elements">
+        <div class="saml-instructions readable">
+            <button type="button" id="newwidgetmenubtn" class="btn menubtn add icon" style="float: right;">{{ 'Add New IDP'|t('app') }}</button>
+            <div class="menu newwidgetmenu">
+                <ul>
+                    <li>
+                        <a href="{{ cpUrl("craft-single-sign-on/oauth-settings") }}" data-type="" data-name="">OAuth Settings</a>
+                    </li>
+                    <li>
+                        <a href="{{ cpUrl("craft-single-sign-on/saml-settings") }}" data-type="" data-name="">SAML Settings</a>
+                    </li>
+                </ul>
+            </div>
+            <h2>Configure Identity Provider</h2>
+            <br>
+        </div>
+        <div class="tableview">
+            <table class="data fullwidth">
+                <thead>
+                    <tr>
+                        <th scope="col" data-attribute="name">Name</th>
+                        <th scope="col" data-attribute="type">Type</th>
+                        <th scope="col" data-attribute="updated">Updated</th>
+                        <th scope="col" data-attribute="modify">Modify</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1.2px solid #e3e3e3;">
+                    {% if customprovider.oauthsettings['app_provider'] is defined %}
+                        <td data-title="name">{{ customprovider.oauthsettings['app_provider']|capitalize }}</td>
+                        <td data-title="type">OAuth</td>
+                        <td data-title="updated">{{ customprovider.oauthsettings['update_date'] }}</td>
+                        <td data-title="modify"><a href="{{ cpUrl("craft-single-sign-on/oauth-settings") }}" data-type="" data-name="">Edit</a> | <a href="{{ cpUrl("craft-single-sign-on/oauth-settings?events=delete") }}" data-type="" data-name="">Delete</a></td>
+                    {% endif %}
+                    </tr>
+                    <tr>
+                    {% if customprovider.samlsettings['app_provider'] is defined %}
+                        <td data-title="name">{{ customprovider.samlsettings['app_provider']|capitalize }}</td>
+                        <td data-title="type">SAML</td>
+                        <td data-title="updated">{{ customprovider.samlsettings['update_date'] }}</td>
+                        <td data-title="modify"><a href="{{ cpUrl("craft-single-sign-on/saml-settings") }}" data-type="" data-name="">Edit</a> | <a href="{{ cpUrl("craft-single-sign-on/saml-settings?events=delete") }}" data-type="" data-name="">Delete</a></td>
+                    {% endif %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

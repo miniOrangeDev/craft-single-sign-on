@@ -1,0 +1,79 @@
+{% extends "craft-single-sign-on/_layouts/samlcp" %}
+{% import "_includes/forms" as forms %}
+
+{% set selectedTab = 'saml_settings' %}
+{% set selectedSubnavItem = 'saml_provider' %}
+
+{% set content %}
+
+    <h2>Settings</h2>
+
+    <form method="post" action="" accept-charset="UTF-8" data-saveshortcut data-confirm-unload>
+
+        {{ csrfInput() }}
+
+        {{ actionInput('craft-single-sign-on/settings/save') }}
+        {{ redirectInput('craft-single-sign-on/saml-settings') }}
+        <input type="hidden" name="pluginClass" value="saml-settings">
+
+        {{ forms.textField({
+            label: 'App Provider',
+            instructions: '',
+            id: 'app_provider',
+            name: 'app_provider',
+            value: samlsettings['app_provider']})
+        }}
+        {{ forms.textField({
+            label: 'SAML Issuer (Entity ID)',
+            instructions: '',
+            id: 'issuer',
+            name: 'issuer',
+            value: samlsettings['issuer']})
+        }}
+        {{ forms.textField({
+            label: 'SAML Login URL',
+            instructions: '',
+            id: 'login_url',
+            name: 'login_url',
+            value: samlsettings['login_url']})
+        }}
+        {{ forms.textField({
+            label: 'SAML Logout URL',
+            instructions: '',
+            id: 'logout_url',
+            name: 'logout_url',
+            value: samlsettings['logout_url']})
+        }}
+        {{ forms.textareaField({
+            label: 'SAML X509 certification',
+            instructions: '',
+            id: 'meta_data',
+            name: 'meta_data',
+            value: samlsettings['meta_data'],
+            rows: 10
+        }) }}
+        {{ forms.textField({
+            label: '',
+            instructions: '',
+            type: 'hidden',
+            id: 'noreg',
+            name: 'noreg',
+            value: '10'})
+        }}
+        {{ forms.textField({
+            label: '',
+            instructions: '',
+            type: 'hidden',
+            id: 'update_date',
+            name: 'update_date',
+            value: "now"|date("d-m-Y")})
+        }}
+
+        <div class="buttons">
+            <input class="btn submit" type="submit" value="{{ 'Save'|t }}">
+            <a onclick="window.open('{{ siteUrl("mosinglesignon/issuer?test_config=1") }}', '', 'width=1000,height=500')" id="test-configuration" class="btn submit">{{ 'Test Configuration'|t }}</a>
+        </div>
+
+    </form>
+
+{% endset %}

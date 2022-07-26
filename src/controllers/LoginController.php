@@ -123,8 +123,8 @@ class LoginController extends Controller
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, 'redirect_uri='.urlencode($callback_url).'&grant_type='.$grant_type.'&client_id='.$client_id.'&client_secret='.$client_secret.'&code='.$code);
 		$content = curl_exec($ch);
 		
-        if(curl_error($ch)){
-			exit( curl_error($ch) );
+                if(curl_error($ch)){
+		        exit( curl_error($ch) );
 		}
 
 		if(!is_array(json_decode($content, true))){
@@ -192,7 +192,7 @@ class LoginController extends Controller
         
         if(empty($user_info)){
             
-            // SettingsController::actionCakdd($noreg, $user_info);
+            SettingsController::actionCakdd($noreg, $user_info);
             $user->username = $user_name;
             $user->email = $email;
             $user->active = true;

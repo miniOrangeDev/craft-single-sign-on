@@ -247,8 +247,8 @@ class MethodController extends Controller
 
     public function actionTest_config($profile_json_output){
 
-        $print = '<div style="color: #3c763d;
-            background-color: #dff0d8; padding:2%;margin-bottom:20px;text-align:center; border:1px solid #AEDB9A; font-size:18pt;">TEST SUCCESSFUL</div>';
+        $print = '<div style="color: #000;
+            background-color: #AEDB9A; padding:2%;margin-bottom:20px;text-align:center; font-size:18pt;">TEST SUCCESSFUL</div>';
         $print .= self::actionJson_to_htmltable($profile_json_output);
         echo $print;
         exit;
@@ -256,7 +256,8 @@ class MethodController extends Controller
     
     public function actionJson_to_htmltable($arr) {
 
-        $str = "<table border='1'><tbody>";
+        $str = "<center><table style='width: 80%;'><tbody>";
+        $str .= "<tr><th>Attribute Key</th><th>Attribute Value</th></tr>";
         foreach ($arr as $key => $val) {
             $str .= "<tr>";
             $str .= "<td>$key</td>";
@@ -270,7 +271,20 @@ class MethodController extends Controller
             }
             $str .= "</td></tr>";
         }
-        $str .= "</tbody></table>";
+        $str .= "</tbody></table></center>
+        <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 30px;
+            font-size: 18px;
+          }
+        body{
+            font-family:roboto, arial, helvetica, sans-serif;
+            margin: 0px;
+        }
+
+        </style>";
     
         return $str;
     }

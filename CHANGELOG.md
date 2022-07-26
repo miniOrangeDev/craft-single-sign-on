@@ -1,5 +1,9 @@
 # Single Sign On Changelog
 
+## 4.0.2 - 2022-07-26
+## Fixed
+- Made compatible with SAML SSO
+
 ## 4.0.1 - 2022-07-14
 ## Fixed
 - Bug fixes

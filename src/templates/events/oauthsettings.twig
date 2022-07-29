@@ -22,6 +22,7 @@
             instructions: '',
             id: 'app_provider',
             name: 'app_provider',
+            placeholder: 'App Name',
             value: oauthsettings['app_provider']})
         }}
         {{ forms.textField({
@@ -29,6 +30,7 @@
             instructions: '',
             id: 'client_id',
             name: 'client_id',
+            placeholder: 'Client ID',
             value: oauthsettings['client_id']})
         }}
         {{ forms.textField({
@@ -36,6 +38,7 @@
             instructions: '',
             id: 'client_secret',
             name: 'client_secret',
+            placeholder: 'Client Secret',
             value: oauthsettings['client_secret']})
         }}
         {{ forms.textField({
@@ -43,6 +46,7 @@
             instructions: '',
             id: 'scope',
             name: 'scope',
+            placeholder: 'Scope',
             value: oauthsettings['scope']})
         }}
         {{ forms.textField({
@@ -50,20 +54,23 @@
             instructions: '',
             id: 'authorization_url',
             name: 'authorization_url',
+            placeholder: 'Authorization API',
             value: oauthsettings['authorization_url']})
         }}
         {{ forms.textField({
-            label: 'Oauth token API',
+            label: 'OAuth Token API',
             instructions: '',
             id: 'oauth_token_api',
             name: 'oauth_token_api',
+            placeholder: 'OAuth Token API',
             value: oauthsettings['oauth_token_api']})
         }}
         {{ forms.textField({
-            label: 'User info API',
+            label: 'User Info API',
             instructions: '',
             id: 'user_info_api',
             name: 'user_info_api',
+            placeholder: 'User Info API',
             value: oauthsettings['user_info_api']})
         }}
         {{ forms.textField({

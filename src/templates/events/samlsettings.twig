@@ -21,6 +21,7 @@
             instructions: '',
             id: 'app_provider',
             name: 'app_provider',
+            placeholder: 'App Name',
             value: samlsettings['app_provider']})
         }}
         {{ forms.textField({
@@ -28,6 +29,7 @@
             instructions: '',
             id: 'issuer',
             name: 'issuer',
+            placeholder: 'SAML Issuer',
             value: samlsettings['issuer']})
         }}
         {{ forms.textField({
@@ -35,6 +37,7 @@
             instructions: '',
             id: 'login_url',
             name: 'login_url',
+            placeholder: 'Login URL',
             value: samlsettings['login_url']})
         }}
         {{ forms.textField({
@@ -42,13 +45,15 @@
             instructions: '',
             id: 'logout_url',
             name: 'logout_url',
+            placeholder: 'Logout URL',
             value: samlsettings['logout_url']})
         }}
         {{ forms.textareaField({
-            label: 'SAML X509 certification',
+            label: 'SAML x509 Certificate',
             instructions: '',
             id: 'meta_data',
             name: 'meta_data',
+            placeholder: 'x509 certificate',
             value: samlsettings['meta_data'],
             rows: 10
         }) }}

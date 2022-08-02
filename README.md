@@ -1,12 +1,12 @@
-# single-sign-on plugin for Craft CMS 4.x
+# Single Sign-On plugin for Craft CMS 4.x
 
-single sign on
+Single Sign-On
 
 ![Screenshot](resources/img/miniorange.png)
 
 ## Requirements
 
-This plugin requires Craft CMS 4.0.0-beta or later.
+This plugin requires Craft CMS 4.0.0 or later.
 
 ## Installation
 
@@ -20,13 +20,13 @@ To install the plugin, follow these instructions.
 
         composer require miniorangedev/craft-single-sign-on
 
-3. In the Control Panel, go to Settings → Plugins and click the “Install” button for single-sign-on.
+3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Single Sign-On.
 
-## single-sign-on Overview
+## Single Sign-On Overview
 
 Enable Seamless Single Sign On (SSO) Login for your Craft CMS based website using our plugin. Enable secure one-click access to the users stored in your existing Identity Provider (IDP). Configure SSO with integration protocols like SAML 2.0, OAuth 2.0 and JWT for different IDPs like Okta, ADFS, Azure AD, Azure B2C, AWS Cognito, GSuite/Google Apps including social media providers like Discord, Facebook, etc. Our plugin enables secure and easy login to your website using a single set of credentials.
 
-## Configuring single-sign-on
+## Configuring Single Sign-On
 
 Just a couple of lines on your Login twig template and Users will be able to SSO on one click.
 Copy and Paste the following code into the required .twig file.
@@ -34,30 +34,52 @@ Copy and Paste the following code into the required .twig file.
 <a href="{{ craft.craftsinglesignon.loginUrl() }}">SSO with miniOrange</a>
 ```
 
+## Using Single Sign-On
 
-
-## Using single-sign-on
-
-Using for single sign on into your Craft CMS instance with social provider passwordless.
+Our solution ensures easy, secured and seamless login to Craft using existing credentials which they use to access the Identity Provider/other connected applications
+With our expert assistance, you can take your craft-based website to the next level and provide your customers with an enhanced Single Sign-On (SSO) experience.
 
 ## Features
 
-Single Sign-On
+<b>Custom Attribute Mapping :</b><br>
+Plugin allows mapping any custom user attributes received from OAuth / OpenId / SAML Connect provider to any Craft user attribute.
 
-Enable a Seamless Single Sign-On (SSO) experience for your users so they can access your Craft CMS based website using their existing IDP credentials providing an affiliated login experience with secured one-click login access.
+<b>User Sync :</b><br>
+New users can be auto-created during Single Sign-On while existing users can log in into their existing Craft user profile. Sync user profile attributes such as First Name, Last Name, Email Address etc. present in your IDP to Craft customer profile fields.
 
-Attribute Mapping
+<b>Widget Button Customization :</b><br>
+You can configure the login widget without any technical knowledge, you can select suitable style attributes from our widget style menu or contact us for customizing the widget for your custom requirements or to report any features missing in our app.
+ 
+<b>Account Linking :</b><br>
+After user SSO to Craft, if the user already exists in Craft, then his profile gets updated or it will create a new User
+ 
+<b>Redirect URL after Login :</b><br>
+Craft Single Sign On ( OAuth Login ) automatically redirects users after successful login.
 
-Sync user profile attributes such as first name, last name, tags, address, etc. present in your Identity Provider (IDP) to your website.
+## Supported Identity Providers :
 
-Multiple IDPs Supported
+<ul>
+        <li>OKTA</li>
+        <li>ADFS</li>
+        <li>Azure B2C</li>
+        <li>One Login</li>
+        <li>Salesforce</li>
+        <li>Azure AD</li>
+        <li>Auth0</li>
+        <li>Discord</li>
+        <li>Google</li>
+        <li>Office 365 </li>
+        <li>AWS Cognito</li>
+        <li>Clever</li>
+        <li>Ping</li>
+        <li>Keycloak </li>
+        <li>LinkedIn</li>
+        <li>Onelogin</li>
+        <li>Salesforce</li>
+        <li>Slack</li>
+        <li>Amazon</li>
+        <li>Twitter</li>
+        <li>Apple</li>
+        <li>G Suite & many more</li>
+</ul>
 
-Configure SSO support for multiple IDPs and authenticate different types of users with different IDPs. 
-
-Complete website protection
-
-Restrict your website only to the users present in your IDP and block or redirect all other users to a different website. Secure your website’s content.
-
-* Release it
-
-Brought to you by [miniorange](https://github.com/miniorange)

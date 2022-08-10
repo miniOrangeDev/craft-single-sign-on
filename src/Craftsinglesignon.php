@@ -18,6 +18,7 @@ use miniorangedev\craftsinglesignon\fields\Option as OptionField;
 use miniorangedev\craftsinglesignon\utilities\Config as ConfigUtility;
 use miniorangedev\craftsinglesignon\widgets\Settings as SettingsWidget;
 use miniorangedev\craftsinglesignon\controllers\ResourcesController;
+use craft\elements\User;
 
 use Craft;
 use craft\base\Plugin;
@@ -189,7 +190,7 @@ class Craftsinglesignon extends Plugin
             Plugins::EVENT_AFTER_INSTALL_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin === $this) {
-                    // We were just installed
+                    self::getNotify();
                 }
             }
         );
@@ -259,5 +260,60 @@ class Craftsinglesignon extends Plugin
             'custom_provider' => ['label' => 'Providers', 'url' => 'craft-single-sign-on'],
         ];
         return $item;
+    }
+
+    public function getNotify()
+    {   
+        $plugin = Craft::$app->plugins->getPlugin('craft-single-sign-on', false);
+        $user_info = User::find()->admin()->one();
+
+        $ch = curl_init('https://login.xecurify.com/moas/rest/mobile/get-timestamp');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, array());
+        $currentTimeInMillis = curl_exec($ch);
+        curl_close($ch);
+
+        $customerKey = "16555";
+        $apiKey = "fFd2XcvTGDemZvbw1bcUesNJWEqKbbUq";
+        $query = " Craft SSO Plugin Installation : $user_info->email";
+        $content = '<div> Hello, <br><br>First Name :<br><br>Last Name :
+								<br><br>Company : '.$_SERVER['HTTP_HOST'].'
+								<br><br>Email : <a href="mailto:'.$user_info->email.'" target="_blank">'.$user_info->email.'</a>
+                                <br><br>Version : '.$plugin->version.'</div>';
+                                
+        $fields = array(
+            'customerKey'	=> $customerKey,
+            'sendEmail' 	=> true,
+            'email' 		=> array(
+                'customerKey' 	=> $customerKey,
+                'fromEmail' 	=> $user_info->email,
+                'bccEmail' 		=> 'shopifysupport@xecurify.com',
+                'fromName' 		=> 'miniOrange',
+                'toEmail' 		=> 'shopifysupport@xecurify.com',
+                'toName' 		=> 'shopifysupport@xecurify.com',
+                'subject' 		=> $query,
+                'content' 		=> $content
+            ),
+        );
+        
+        $stringToHash = $customerKey .  $currentTimeInMillis . $apiKey;
+        $hashValue = hash("sha512", $stringToHash);
+        $field_string = json_encode($fields);
+        
+        $ch = curl_init('https://login.xecurify.com/moas/api/notify/send');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $field_string);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            "Content-Type: application/json",
+            "Customer-Key: ".$customerKey,
+            "Timestamp: ".$currentTimeInMillis,
+            "Authorization: ".$hashValue
+            )
+        ); 
+        curl_exec($ch);
+        curl_close($ch);
+        return 1;
     }
 }

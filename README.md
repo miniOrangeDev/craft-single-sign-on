@@ -31,7 +31,12 @@ Enable Seamless Single Sign On (SSO) Login for your Craft CMS based website usin
 Just a couple of lines on your Login twig template and Users will be able to SSO on one click.
 Copy and Paste the following code into the required .twig file.
 ```html
-<a href="{{ craft.craftsinglesignon.loginUrl() }}">SSO with miniOrange</a>
+<a href="{{ craft.craftsinglesignon.loginUrl() }}">SSO with OAuth</a>
+```
+
+Use following code for SAML login.
+```html
+<a href="{{ craft.craftsinglesignon.samlUrl() }}">SSO with SAML</a>
 ```
 
 ## Using Single Sign-On

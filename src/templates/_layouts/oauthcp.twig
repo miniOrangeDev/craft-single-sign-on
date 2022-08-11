@@ -1,9 +1,0 @@
-{% extends "_layouts/cp" %}
-{% import "_includes/forms" as forms %}
-
-{% set title = 'Single Sign On' %}
-
-{% set tabs = {
-    oauth_settings: { label: "IDP Settings"|t, url: url('craft-single-sign-on/oauth-settings') },
-    oauth_attribute: { label: "IDP Attribute"|t, url: url('craft-single-sign-on/oauth-attribute') },
-} %}

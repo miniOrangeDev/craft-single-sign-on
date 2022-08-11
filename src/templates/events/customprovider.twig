@@ -1,0 +1,103 @@
+{% extends "craft-single-sign-on/_layouts/providercp" %}
+{% import "_includes/forms" as forms %}
+
+{% set selectedTab = 'custom_provider' %}
+
+{% block content %}
+    
+    <div class="elements">
+        <div class="saml-instructions readable">
+            <button type="button" onclick="AddIDP()" class="btn add icon" style="float: right;">{{ 'Add New IDP'|t('app') }}</button>
+            <h2>Configure Identity Provider</h2>
+            <br>
+        </div>
+        <div class="tableview">
+            <table class="data fullwidth">
+                <thead>
+                    <tr>
+                        <th scope="col" data-attribute="name">Name</th>
+                        <th scope="col" data-attribute="type">Type</th>
+                        <th scope="col" data-attribute="updated">Updated</th>
+                        <th scope="col" data-attribute="modify">Modify</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1.2px solid #e3e3e3;">
+                    {% if customprovider.oauthsettings['app_provider'] is defined %}
+                        <td data-title="name">{{ customprovider.oauthsettings['app_provider']|capitalize }}</td>
+                        <td data-title="type">OAuth</td>
+                        <td data-title="updated">{{ customprovider.oauthsettings['update_date'] }}</td>
+                        <td data-title="modify"><a href="{{ cpUrl("craft-single-sign-on/oauth-settings") }}" data-type="" data-name="">Edit</a> | <a href="{{ cpUrl("craft-single-sign-on/oauth-settings?events=delete") }}" data-type="" data-name="">Delete</a></td>
+                    {% endif %}
+                    </tr>
+                    <tr>
+                    {% if customprovider.samlsettings['app_provider'] is defined %}
+                        <td data-title="name">{{ customprovider.samlsettings['app_provider']|capitalize }}</td>
+                        <td data-title="type">SAML</td>
+                        <td data-title="updated">{{ customprovider.samlsettings['update_date'] }}</td>
+                        <td data-title="modify"><a href="{{ cpUrl("craft-single-sign-on/saml-settings") }}" data-type="" data-name="">Edit</a> | <a href="{{ cpUrl("craft-single-sign-on/saml-settings?events=delete") }}" data-type="" data-name="">Delete</a></td>
+                    {% endif %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function AddIDP() {
+            $modal = new Garnish.Modal($('#Choose-IDP'));
+        }
+    </script>
+    <div id="Choose-IDP" class="modal" style="display: none;"> <!-- modal body -->
+        <div id="modal" class="body" style="height:100%;"> <!-- modal-content -->
+            <header class="header">
+                <h2>Create a new IDP integration</h2>
+            </header>
+            <div style="font-size: 15px; display: flex;">
+                <div style="width: 30%; padding: 2%;">
+                    <h1>Sign in method</h1>
+                </div>
+                <div style="width: 70%">         
+                    <div for="oauth" style="padding: 2%; border: 2px solid #e9e8e8; border-radius: 4px; margin: 1em;">
+                        <label for="1">
+                            <input type="radio" name="integration" id="oauth" value="oauth">
+                            <span class="checkmark"></span>
+                            OAuth
+                            <p>Token-based OAuth 2.0 authentication for Single Sign-On (SSO) through API endpoints. Recommended if you intend to build a custom app integration with the miniOrange Sign-In Widget.</p>
+                        </label> 
+                    </div>
+                    <div for="saml" style="padding: 2%; border: 2px solid #e9e8e8; border-radius: 4px; margin: 1em;">
+                        <label for="1">
+                            <input type="radio" name="integration" id="saml" value="saml">
+                            <span class="checkmark"></span>
+                            SAML
+                            <p>XML-based open standard for SSO, Use if the Identity Provider for your application only supports SAML.</p>
+                        </label> 
+                    </div>
+                </div>
+            </div>
+            <div class="buttons" style="position:absolute;bottom: 3em;right:3em;">
+                <input id="nextClick" class="btn submit" type="submit" value="{{ 'Next'|t }}" >
+            </div>
+        </div>
+    </div>
+    <script>
+    
+        document.getElementById('nextClick').addEventListener('click', function(event) {
+
+        var radios = document.getElementsByName('integration');
+        for (var i = 0, length = radios.length; i < length; i++) {
+            if (radios[i].checked) {
+                var selected_value = radios[i].value;
+                if(selected_value == "oauth"){
+                    window.location = "{{ cpUrl("craft-single-sign-on/oauth-settings") }}";
+                }
+                else if(selected_value == "saml"){
+                    window.location = "{{ cpUrl("craft-single-sign-on/saml-settings") }}";
+                }
+                return;
+            }
+        }
+        event.preventDefault();
+    });
+    </script>
+{% endblock %}

@@ -1,0 +1,26 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * craft-single-sign-on plugin for Craft CMS
+ *
+ * Settings Widget Settings
+ *
+ * @author    miniorange
+ * @copyright Copyright (c) 2022 miniorange
+ * @link      https://github.com/miniorangedev
+ * @package   Craftsinglesignon
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("miniorangedev\\craftsinglesignon\\assetbundles\\craftsinglesignon\\CraftsinglesignonAsset") %}
+
+{{ forms.textField({
+    label: 'Message',
+    instructions: 'Enter a message here.',
+    id: 'message',
+    name: 'message',
+    value: widget['message']})
+}}

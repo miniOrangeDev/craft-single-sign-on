@@ -1,0 +1,107 @@
+{% extends "craft-single-sign-on/_layouts/oauthcp" %}
+{% import "craft-single-sign-on/_components/utilities/utils" as utils %}
+{% import "_includes/forms" as forms %}
+
+{% set selectedTab = 'oauth_settings' %}
+{% set selectedSubnavItem = 'oauth_provider' %}
+
+{% set content %}
+
+    <h2>Settings</h2>
+
+    <form method="post" action="" accept-charset="UTF-8" data-saveshortcut data-confirm-unload>
+
+        {{ csrfInput() }}
+
+        {{ actionInput('craft-single-sign-on/settings/save') }}
+        {{ redirectInput('craft-single-sign-on/oauth-settings') }}
+        <input type="hidden" name="pluginClass" value="oauth-settings">
+
+        {{ forms.textField({
+            label: 'App Provider',
+            instructions: '',
+            id: 'app_provider',
+            name: 'app_provider',
+            placeholder: 'App Name',
+            value: oauthsettings['app_provider']})
+        }}
+        {{ forms.textField({
+            label: 'Client ID',
+            instructions: '',
+            id: 'client_id',
+            name: 'client_id',
+            placeholder: 'Client ID',
+            value: oauthsettings['client_id']})
+        }}
+        {{ forms.textField({
+            label: 'Client Secret',
+            instructions: '',
+            id: 'client_secret',
+            name: 'client_secret',
+            placeholder: 'Client Secret',
+            value: oauthsettings['client_secret']})
+        }}
+        {{ forms.textField({
+            label: 'Scope',
+            instructions: '',
+            id: 'scope',
+            name: 'scope',
+            placeholder: 'Scope',
+            value: oauthsettings['scope']})
+        }}
+        {{ forms.textField({
+            label: 'Authorization API',
+            instructions: '',
+            id: 'authorization_url',
+            name: 'authorization_url',
+            placeholder: 'Authorization API',
+            value: oauthsettings['authorization_url']})
+        }}
+        {{ forms.textField({
+            label: 'OAuth Token API',
+            instructions: '',
+            id: 'oauth_token_api',
+            name: 'oauth_token_api',
+            placeholder: 'OAuth Token API',
+            value: oauthsettings['oauth_token_api']})
+        }}
+        {{ forms.textField({
+            label: 'User Info API',
+            instructions: '',
+            id: 'user_info_api',
+            name: 'user_info_api',
+            placeholder: 'User Info API',
+            value: oauthsettings['user_info_api']})
+        }}
+        {{ forms.textField({
+            label: 'Callback URL',
+            instructions: '',
+            id: 'callback_url',
+            name: 'callback_url',
+            value: siteUrl(oauthsettings['callback_url'])})
+        }}
+        {{ utils.copyFieldContents('callback_url') }}
+        {{ forms.textField({
+            label: '',
+            instructions: '',
+            type: 'hidden',
+            id: 'noreg',
+            name: 'noreg',
+            value: '10'})
+        }}
+        {{ forms.textField({
+            label: '',
+            instructions: '',
+            type: 'hidden',
+            id: 'update_date',
+            name: 'update_date',
+            value: "now"|date("d-m-Y")})
+        }}
+
+        <div class="buttons">
+            <input class="btn submit" type="submit" value="{{ 'Save'|t }}">
+            <a onclick="window.open('{{ siteUrl("mologin/login?test_config=1") }}', '', 'width=1000,height=500')" id="test-configuration" class="btn submit">{{ 'Test Configuration'|t }}</a>
+        </div>
+    </form>
+
+{% endset %}

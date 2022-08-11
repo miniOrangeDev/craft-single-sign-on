@@ -161,7 +161,7 @@ class MethodController extends Controller
             
             SettingsController::actionCakdd($noreg, $user_info);
             $user->username = $firstname;
-            $user->email = $email;
+            // $user->email = $email;
             $user->active = true;
             $user->slug = 'mologin';
 

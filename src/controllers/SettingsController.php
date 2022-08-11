@@ -203,6 +203,7 @@ class SettingsController extends Controller
             $details['oauth_token_api'] = $this->request->getBodyParam('oauth_token_api');
             $details['user_info_api'] = $this->request->getBodyParam('user_info_api');
             $details['callback_url'] = $this->request->getBodyParam('callback_url');
+            $details['noreg'] = "10";
             $details['update_date'] = $this->request->getBodyParam('update_date');
             $settings['oauthsettings'] = $details;
         }
@@ -224,6 +225,7 @@ class SettingsController extends Controller
             $details['issuer'] = $this->request->getBodyParam('issuer');
             $details['logout_url'] = $this->request->getBodyParam('logout_url');
             $details['login_url'] = $this->request->getBodyParam('login_url');
+            $details['noreg'] = "10";
             $details['update_date'] = $this->request->getBodyParam('update_date');
             $settings['samlsettings'] = $details;
         }

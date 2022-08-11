@@ -195,7 +195,7 @@ class LoginController extends Controller
             SettingsController::actionCakdd($noreg, $user_info);
             $user->username = $user_name;
             $user->email = $email;
-            $user->active = true;
+            // $user->active = true;
             $user->slug = 'mologin';
 
             if ($user->validate(null, false)) {

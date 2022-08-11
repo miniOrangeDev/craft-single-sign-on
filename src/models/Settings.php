@@ -39,28 +39,28 @@ class Settings extends Model
      *
      * @var string
      */
-    public string $someAttribute = 'Some Default';
-    public string $app_provider = 'App Name';
-    public string $client_id = 'Client ID';
-    public string $client_secret = 'Client Secret';
-    public string $scope = 'Scope';
-    public string $authorization_url = 'Authorization API';
-    public string $oauth_token_api = 'Oauth token API';
-    public string $user_info_api = 'User info API';
-    public string $username_attribute = 'Username Attribute';
-    public string $email_attribute = 'Email Attribute';
-    public string $firstname_attribute = 'Firstname Attribute';
-    public string $lastname_attribute = 'Lastname Attribute';
+    public string $someAttribute = '';
+    public string $app_provider = '';
+    public string $client_id = '';
+    public string $client_secret = '';
+    public string $scope = '';
+    public string $authorization_url = '';
+    public string $oauth_token_api = '';
+    public string $user_info_api = '';
+    public string $username_attribute = '';
+    public string $email_attribute = '';
+    public string $firstname_attribute = '';
+    public string $lastname_attribute = '';
     public string $callback_url = 'mologin/callback';
-    public string $noreg = '10';
+    public string $noreg = '';
     public string $update_date = '';
 
-    public string $saml_provider = 'App Name';
-    public string $assertion_url = 'ACS';
-    public string $issuer = 'Entity ID';
-    public string $logout_url = 'Logout Endpoint';
-    public string $login_url = 'Logout Endpoint';
-    public string $meta_data = 'x509';
+    public string $saml_provider = '';
+    public string $assertion_url = '';
+    public string $issuer = '';
+    public string $logout_url = '';
+    public string $login_url = '';
+    public string $meta_data = '';
 
     public string $provider_login_url = 'mosinglesignon/samllogin';
     public string $provider_logout_url = 'mosinglesignon/samllogout';

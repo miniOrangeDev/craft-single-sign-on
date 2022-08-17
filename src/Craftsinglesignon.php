@@ -135,6 +135,7 @@ class Craftsinglesignon extends Plugin
         Event::on(
             UrlManager::class,
             UrlManager::EVENT_REGISTER_CP_URL_RULES,
+            [self::class, 'onRegisterCpUrlRules'],
             function (RegisterUrlRulesEvent $event) {
                 $event->rules['craft-single-sign-on'] = 'craft-single-sign-on/settings/providers';
                 $event->rules['craft-single-sign-on/oauth-settings'] = 'craft-single-sign-on/settings/oauthsettings';
@@ -250,6 +251,34 @@ class Craftsinglesignon extends Plugin
                 'settings' => Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('craft-single-sign-on'))->send()
             ]
         );
+    }
+
+    /**
+     * @param RegisterUrlRulesEvent $event
+     */
+    public static function onRegisterCpUrlRules(RegisterUrlRulesEvent $event)
+    {
+        if(Craft::$app->getUser()->getIdentity()==null){
+            
+            if (\Craft::$app->getIsLive()) {
+                $event->rules = array_merge(
+                    $event->rules,
+                    [
+                        'login' => 'craft-single-sign-on/settings',
+                    ]
+                );
+            }
+
+        }else{
+            $event->rules['craft-single-sign-on'] = 'craft-single-sign-on/settings/providers';
+            $event->rules['craft-single-sign-on/oauth-settings'] = 'craft-single-sign-on/settings/oauthsettings';
+            $event->rules['craft-single-sign-on/oauth-attribute'] = 'craft-single-sign-on/settings/oauthattribute';
+            $event->rules['craft-single-sign-on/saml-settings'] = 'craft-single-sign-on/settings/samlsettings';
+            $event->rules['craft-single-sign-on/saml-attribute'] = 'craft-single-sign-on/settings/samlattribute';
+            $event->rules['craft-single-sign-on/saml-provider'] = 'craft-single-sign-on/settings/samlprovider';
+            $event->rules['craft-single-sign-on/jwt-settings'] = 'craft-single-sign-on/settings/jwtsettings';
+        }
+        // parent::onRegisterCpUrlRules($event);
     }
 
     public function getCpNavItem(): ?array

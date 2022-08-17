@@ -22,7 +22,7 @@
             id: 'app_provider',
             name: 'app_provider',
             placeholder: 'App Name',
-            value: samlsettings['app_provider']})
+            value: samlsettings['app_provider'] ?? ""})
         }}
         {{ forms.textField({
             label: 'SAML Issuer (Entity ID)',
@@ -30,7 +30,7 @@
             id: 'issuer',
             name: 'issuer',
             placeholder: 'SAML Issuer',
-            value: samlsettings['issuer']})
+            value: samlsettings['issuer'] ?? ""})
         }}
         {{ forms.textField({
             label: 'SAML Login URL',
@@ -38,7 +38,7 @@
             id: 'login_url',
             name: 'login_url',
             placeholder: 'Login URL',
-            value: samlsettings['login_url']})
+            value: samlsettings['login_url'] ?? ""})
         }}
         {{ forms.textField({
             label: 'SAML Logout URL',
@@ -46,7 +46,7 @@
             id: 'logout_url',
             name: 'logout_url',
             placeholder: 'Logout URL',
-            value: samlsettings['logout_url']})
+            value: samlsettings['logout_url'] ?? ""})
         }}
         {{ forms.textareaField({
             label: 'SAML x509 Certificate',
@@ -54,7 +54,7 @@
             id: 'meta_data',
             name: 'meta_data',
             placeholder: 'x509 certificate',
-            value: samlsettings['meta_data'],
+            value: samlsettings['meta_data'] ?? "",
             rows: 10
         }) }}
         {{ forms.textField({

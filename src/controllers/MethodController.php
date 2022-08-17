@@ -188,6 +188,7 @@ class MethodController extends Controller
         $key = 0;
         $meta_data = isset($data['meta_data'])?$data['meta_data']:"";
         $site_url = (Craft::$app->version>4)?getenv('PRIMARY_SITE_URL'):getenv('PRIMARY_SITE_URL');
+        $site_url = preg_replace( "{/$}", "", $site_url);
         $acsUrl = $site_url."/mosinglesignon/samllogin";
 
         if(array_key_exists('RelayState', $_POST) && !empty( $_POST['RelayState'] ) && $_POST['RelayState'] != '/') {

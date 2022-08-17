@@ -65,7 +65,13 @@ class SettingsController extends Controller
      */
     public function actionIndex()
     {
-        return true;
+        $settings = (ResourcesController::actionDatadb() != null)?ResourcesController::actionDatadb():Craftsinglesignon::$plugin->getSettings();
+
+        return $this->renderTemplate(
+            'craft-single-sign-on/view/login', [
+                'providers' => $settings,
+            ]
+        );
     }
 
     /**

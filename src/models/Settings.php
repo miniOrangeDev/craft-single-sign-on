@@ -52,6 +52,9 @@ class Settings extends Model
     public string $firstname_attribute = '';
     public string $lastname_attribute = '';
     public string $callback_url = 'mologin/callback';
+    public string $redirect_url = '';
+    public string $grouphandle = '';
+    public string $userRole = '';
     public string $noreg = '';
     public string $update_date = '';
 

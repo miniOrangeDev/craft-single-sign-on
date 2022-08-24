@@ -137,13 +137,7 @@ class Craftsinglesignon extends Plugin
             UrlManager::EVENT_REGISTER_CP_URL_RULES,
             [self::class, 'onRegisterCpUrlRules'],
             function (RegisterUrlRulesEvent $event) {
-                $event->rules['craft-single-sign-on'] = 'craft-single-sign-on/settings/providers';
-                $event->rules['craft-single-sign-on/oauth-settings'] = 'craft-single-sign-on/settings/oauthsettings';
-                $event->rules['craft-single-sign-on/oauth-attribute'] = 'craft-single-sign-on/settings/oauthattribute';
-                $event->rules['craft-single-sign-on/saml-settings'] = 'craft-single-sign-on/settings/samlsettings';
-                $event->rules['craft-single-sign-on/saml-attribute'] = 'craft-single-sign-on/settings/samlattribute';
-                $event->rules['craft-single-sign-on/saml-provider'] = 'craft-single-sign-on/settings/samlprovider';
-                $event->rules['craft-single-sign-on/jwt-settings'] = 'craft-single-sign-on/settings/jwtsettings';
+                
             }
         );
 
@@ -276,9 +270,9 @@ class Craftsinglesignon extends Plugin
             $event->rules['craft-single-sign-on/saml-settings'] = 'craft-single-sign-on/settings/samlsettings';
             $event->rules['craft-single-sign-on/saml-attribute'] = 'craft-single-sign-on/settings/samlattribute';
             $event->rules['craft-single-sign-on/saml-provider'] = 'craft-single-sign-on/settings/samlprovider';
+            $event->rules['craft-single-sign-on/custom-settings'] = 'craft-single-sign-on/settings/customsettings';
             $event->rules['craft-single-sign-on/jwt-settings'] = 'craft-single-sign-on/settings/jwtsettings';
         }
-        // parent::onRegisterCpUrlRules($event);
     }
 
     public function getCpNavItem(): ?array
@@ -287,6 +281,7 @@ class Craftsinglesignon extends Plugin
         $item['badgeCount'] = 5;
         $item['subnav'] = [
             'custom_provider' => ['label' => 'Providers', 'url' => 'craft-single-sign-on'],
+            'custom_settings' => ['label' => 'Settings', 'url' => 'craft-single-sign-on/custom-settings'],
         ];
         return $item;
     }

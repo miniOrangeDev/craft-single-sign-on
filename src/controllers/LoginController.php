@@ -203,11 +203,14 @@ class LoginController extends Controller
             $user->slug = 'mologin';
 
             if ($user->validate(null, false)) {
+                
                 Craft::$app->getElements()->saveElement($user, false);
 
                 if(isset($groupmap['grouphandle'])){
-                    $group = Craft::$app->userGroups->getGroupByHandle($groupmap['grouphandle']);
-                    Craft::$app->users->assignUserToGroups($user->id, $group->id);
+                    foreach($groupmap['grouphandle'] as $grouphandle){
+                        $group = Craft::$app->userGroups->getGroupByHandle($grouphandle);
+                        Craft::$app->users->assignUserToGroups($user->id, [$group->id]);
+                    }
                 }else{
                     $userRole = isset($groupmap['userRole'])?$groupmap['userRole']:array('accessCp');
                     Craft::$app->userPermissions->saveUserPermissions($user->id, $groupmap['userRole']);

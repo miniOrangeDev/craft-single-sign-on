@@ -177,7 +177,7 @@ class MethodController extends Controller
                     }
                 }else{
                     $userRole = isset($groupmap['userRole'])?$groupmap['userRole']:array('accessCp');
-                    Craft::$app->userPermissions->saveUserPermissions($user->id, $groupmap['userRole']);
+                    Craft::$app->userPermissions->saveUserPermissions($user->id, $userRole);
                 }
             }
         }

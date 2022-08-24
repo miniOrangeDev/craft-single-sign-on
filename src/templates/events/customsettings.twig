@@ -1,0 +1,65 @@
+{% extends "craft-single-sign-on/_layouts/settingscp" %}
+{% import "_includes/forms" as forms %}
+
+{% set selectedTab = 'custom_settings' %}
+{% set selectedSubnavItem = 'custom_settings' %}
+
+{% set content %}
+
+    <h2>Custom Settings</h2>
+
+    <form method="post" action="" accept-charset="UTF-8" data-saveshortcut data-confirm-unload>
+
+        {{ csrfInput() }}
+
+        {{ actionInput('craft-single-sign-on/settings/save') }}
+        {{ redirectInput('craft-single-sign-on/custom-settings') }}
+        <input type="hidden" name="pluginClass" value="custom-settings">
+
+        {{ forms.textField({
+            label: 'Redirect SSO',
+            instructions: 'Register/Login user will redirect after SSO on following link.',
+            id: 'redirect_url',
+            name: 'redirect_url',
+            placeholder: 'https://<hostname>/<sitename>/web/admin/dashboard',
+            value: customsettings['redirect_url'] ?? ''})
+        }}
+
+        <hr>
+        {% set userRoles = craft.userPermissions.getAllPermissions() %}
+
+        <h3>Select User Permission On SSO Registration</h3>
+        {% if userRoles|length %}
+            {% for userRole in userRoles %}
+                {% for role, value in userRole %}
+                    <label for="1">
+                        <input type="checkbox" name="userRole[]" id="userRole" value="{{ role }}" {{ role in customsettings['userRole'] ? "checked" }}>
+                        <span class="checkmark"></span>
+                        {{ value["label"] }}
+                    </label> <br>
+                {% endfor %}    
+            {% endfor %}
+        {% endif %}
+
+        <hr>
+        {% set userGroups = craft.userGroups.getAllGroups() %}
+
+        <h3>Select User Group On SSO Registration</h3>
+        {% if userGroups|length %}
+            {% for userGroup in userGroups %}
+                <label for="1">
+                    <input type="checkbox" name="grouphandle[]" id="grouphandle" value="{{ userGroup.handle }}" {{ userGroup.handle in customsettings['grouphandle'] ? "checked" }}>
+                    <span class="checkmark"></span>
+                    <b>{{ userGroup.name }}</b>
+                </label> <br><br>
+            {% endfor %}
+        {% else %}
+            <h2>No User Groups Created Yet!</h2>
+        {% endif %}
+
+        <div class="buttons">
+            <input class="btn submit" type="submit" value="{{ 'Save'|t }}">
+        </div>
+    </form>
+
+{% endset %}

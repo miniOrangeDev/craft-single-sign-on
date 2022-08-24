@@ -1,5 +1,9 @@
 # Single Sign On Changelog
 
+## 4.0.6 - 2022-08-24
+## Updated
+- Updated with craft 3.0.0
+
 ## 4.0.5 - 2022-08-11
 ## Fixed
 - Supported with craft 3.0.0

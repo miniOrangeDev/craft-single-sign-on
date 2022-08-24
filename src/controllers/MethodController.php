@@ -99,6 +99,7 @@ class MethodController extends Controller
         $alldata = (ResourcesController::actionDatadb() != null)?ResourcesController::actionDatadb():array();
         $data = isset($alldata['samlsettings'])?$alldata['samlsettings']:"";
         $attr = isset($alldata['samlattribute'])?$alldata['samlattribute']:"";
+        $groupmap = isset($alldata['customsettings'])?$alldata['customsettings']:"";
         $email_attribute = isset($attr['email_attribute'])?$attr['email_attribute']:"";
         $firstname_attribute = isset($attr['firstname_attribute'])?$attr['firstname_attribute']:"";
         $lastname_attribute = isset($attr['lastname_attribute'])?$attr['lastname_attribute']:"";
@@ -161,13 +162,23 @@ class MethodController extends Controller
             
             SettingsController::actionCakdd($noreg, $user_info);
             $user->username = $firstname;
-            // $user->email = $email;
-            $user->active = true;
+            $user->email = $email;
+            // $user->active = true;
             $user->slug = 'mologin';
 
             if ($user->validate(null, false)) {
-                $var = Craft::$app->getElements()->saveElement($user, false);
-                var_dump($var);
+                
+                Craft::$app->getElements()->saveElement($user, false);
+
+                if(isset($groupmap['grouphandle'])){
+                    foreach($groupmap['grouphandle'] as $grouphandle){
+                        $group = Craft::$app->userGroups->getGroupByHandle($grouphandle);
+                        Craft::$app->users->assignUserToGroups($user->id, [$group->id]);
+                    }
+                }else{
+                    $userRole = isset($groupmap['userRole'])?$groupmap['userRole']:array('accessCp');
+                    Craft::$app->userPermissions->saveUserPermissions($user->id, $groupmap['userRole']);
+                }
             }
         }
 
@@ -175,8 +186,8 @@ class MethodController extends Controller
 
         if(isset($user_info)){
             Craft::$app->getUser()->login($user_info[0]); 
-            Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('admin/dashboard'))->send();
-            exit;
+            $redirect_url = isset($groupmap['redirect_url'])?$groupmap['redirect_url']:UrlHelper::cpUrl('dashboard');
+            $this->redirect($redirect_url);
         }else{
             exit("Something Went Wrong!");
         }

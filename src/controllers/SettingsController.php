@@ -52,7 +52,7 @@ class SettingsController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['index', 'check', 'delete', 'save', 'oauthsettings', 'oauthattribute', 'samlprovider', 'samlsettings', 'samlattribute'];
+    protected $allowAnonymous = ['index', 'check', 'delete', 'save', 'oauthsettings', 'oauthattribute', 'samlprovider', 'samlsettings', 'samlattribute', 'customsettings'];
 
     // Public Methods
     // =========================================================================
@@ -181,6 +181,15 @@ class SettingsController extends Controller
         ));
     }
 
+    public function actionCustomsettings(): Response
+    {
+        $attribute = (ResourcesController::actionDatadb('customsettings') != null)?ResourcesController::actionDatadb('customsettings'):Craftsinglesignon::$plugin->getSettings();
+        
+        return $this->renderTemplate('craft-single-sign-on/events/customsettings', array(
+            'customsettings' => $attribute,
+        ));
+    }
+
     public function actionSave(): ?Response
     {
         $this->requirePermission('edit-events');
@@ -234,6 +243,15 @@ class SettingsController extends Controller
             $details['noreg'] = "10";
             $details['update_date'] = $this->request->getBodyParam('update_date');
             $settings['samlsettings'] = $details;
+        }
+
+        //custom settings
+        if($this->request->getBodyParam('pluginClass')=='custom-settings')
+        {
+            $details['redirect_url'] = $this->request->getBodyParam('redirect_url');
+            $details['grouphandle'] = $this->request->getBodyParam('grouphandle');
+            $details['userRole'] = $this->request->getBodyParam('userRole');
+            $settings['customsettings'] = $details;
         }
         
         // Insert query

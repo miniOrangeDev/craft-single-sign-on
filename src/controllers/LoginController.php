@@ -97,6 +97,7 @@ class LoginController extends Controller
         $alldata = (ResourcesController::actionDatadb() != null)?ResourcesController::actionDatadb():array();
         $data = isset($alldata['oauthsettings'])?$alldata['oauthsettings']:"";
         $attr = isset($alldata['oauthattribute'])?$alldata['oauthattribute']:"";
+        $groupmap = isset($alldata['customsettings'])?$alldata['customsettings']:"";
         $client_id = isset($data['client_id'])?$data['client_id']:"";
         $client_secret = isset($data['client_secret'])?$data['client_secret']:"";
         $oauth_token_api = isset($data['oauth_token_api'])?$data['oauth_token_api']:"";
@@ -169,8 +170,8 @@ class LoginController extends Controller
             } else if(isset($profile_json_output["error"])){
                 exit($profile_json_output["error"]);
             } else if(isset($profile_json_output)) {
-                $user_name = isset( $profile_json_output[$username_attribute]) ?  $profile_json_output[$username_attribute] : '';
-                $email = isset( $profile_json_output[$email_attribute]) ?  $profile_json_output[$email_attribute] : '';
+                $user_name = isset($profile_json_output[$username_attribute]) ?  $profile_json_output[$username_attribute] : '';
+                $email = isset($profile_json_output[$email_attribute]) ?  $profile_json_output[$email_attribute] : '';
             } else {
                 exit('Invalid response received from OAuth Provider. Contact your administrator for more details.');
             }
@@ -192,6 +193,9 @@ class LoginController extends Controller
         
         if(empty($user_info)){
             
+            if(Craft::$app->getUser()->getIdentity())
+                return;
+            
             SettingsController::actionCakdd($noreg, $user_info);
             $user->username = $user_name;
             $user->email = $email;
@@ -200,14 +204,23 @@ class LoginController extends Controller
 
             if ($user->validate(null, false)) {
                 Craft::$app->getElements()->saveElement($user, false);
+
+                if(isset($groupmap['grouphandle'])){
+                    $group = Craft::$app->userGroups->getGroupByHandle($groupmap['grouphandle']);
+                    Craft::$app->users->assignUserToGroups($user->id, $group->id);
+                }else{
+                    $userRole = isset($groupmap['userRole'])?$groupmap['userRole']:array('accessCp');
+                    Craft::$app->userPermissions->saveUserPermissions($user->id, $groupmap['userRole']);
+                }
             }
         }
 
         $user_info = User::find()->email($email)->all();
         
         if(isset($user_info)){
-            Craft::$app->getUser()->login($user_info[0]); 
-            Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('admin/dashboard'))->send();
+            Craft::$app->getUser()->login($user_info[0]);
+            $redirect_url = isset($groupmap['redirect_url'])?$groupmap['redirect_url']:UrlHelper::cpUrl('dashboard');
+            $this->redirect($redirect_url);
         }else{ 
             exit("Error in login!");
         }

@@ -49,7 +49,7 @@ class LoginController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['index', 'callback', 'test_config', 'json_to_htmltable', 'saml', 'samllogin'];
+    protected array|int|bool $allowAnonymous = ['index', 'callback', 'test_config', 'saml', 'samllogin'];
 
     // Public Methods
     // =========================================================================
@@ -63,12 +63,12 @@ class LoginController extends Controller
     public function actionIndex()
     {
         $alldata = ResourcesController::actionDatadb();
-        $data = isset($alldata['oauthsettings'])?$alldata['oauthsettings']:"";
-        $client_id = isset($data['client_id'])?$data['client_id']:"";
-        $scope = isset($data['scope'])?$data['scope']:"";
-        $authorization_url = isset($data['authorization_url'])?$data['authorization_url']:"";
-        $state = isset($data['app_provider'])?$data['app_provider']:"";
-        $callback_url = isset($data['callback_url'])?$data['callback_url']:"";
+        $data = @$alldata['oauthsettings'] ?: null;
+        $client_id = @$data['client_id'] ?: null;
+        $scope = @$data['scope'] ?: null;
+        $authorization_url = @$data['authorization_url'] ?: null;
+        $state = @$data['app_provider'] ?: null;
+        $callback_url = @$data['callback_url'] ?: null;
 
         if(isset($_GET['test_config'])){
             $alldata['test_config'] = 1;
@@ -92,20 +92,17 @@ class LoginController extends Controller
      */
     public function actionCallback()
     {
-        $user = new User;
         $code = Craft::$app->request->getQueryParam('code');
         $alldata = (ResourcesController::actionDatadb() != null)?ResourcesController::actionDatadb():array();
-        $data = isset($alldata['oauthsettings'])?$alldata['oauthsettings']:"";
-        $attr = isset($alldata['oauthattribute'])?$alldata['oauthattribute']:"";
-        $groupmap = isset($alldata['customsettings'])?$alldata['customsettings']:"";
-        $client_id = isset($data['client_id'])?$data['client_id']:"";
-        $client_secret = isset($data['client_secret'])?$data['client_secret']:"";
-        $oauth_token_api = isset($data['oauth_token_api'])?$data['oauth_token_api']:"";
-        $user_info_api = isset($data['user_info_api'])?$data['user_info_api']:"";
-        $username_attribute = isset($attr['username_attribute'])?$attr['username_attribute']:"";
-        $email_attribute = isset($attr['email_attribute'])?$attr['email_attribute']:"";
-        $noreg = isset($data['noreg'])?$data['noreg']:"";
-        $callback_url = isset($data['callback_url'])?$data['callback_url']:"";
+        $data = @$alldata['oauthsettings'] ?: null;
+        $attr = @$alldata['oauthattribute'] ?: null;
+        $client_id = @$data['client_id'] ?: null;
+        $client_secret = @$data['client_secret'] ?: null;
+        $oauth_token_api = @$data['oauth_token_api'] ?: null;
+        $user_info_api = @$data['user_info_api'] ?: null;
+        $username_attribute = @$attr['username_attribute'] ?: null;
+        $email_attribute = @$attr['email_attribute'] ?: null;
+        $callback_url = @$data['callback_url'] ?: null;
         $grant_type = "authorization_code";
         $profile_json_output = array();
 
@@ -117,18 +114,13 @@ class LoginController extends Controller
 		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
 		curl_setopt( $ch, CURLOPT_MAXREDIRS, 10 );
 		curl_setopt( $ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-			'Accept: application/json'
-		));
-		
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json'));
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, 'redirect_uri='.urlencode($callback_url).'&grant_type='.$grant_type.'&client_id='.$client_id.'&client_secret='.$client_secret.'&code='.$code);
 		$content = curl_exec($ch);
-		
-                if(curl_error($ch)){
-		        exit( curl_error($ch) );
-		}
 
-		if(!is_array(json_decode($content, true))){
+        if(curl_error($ch)){
+            exit(curl_error($ch));
+        } else if(!is_array(json_decode($content, true))){
 			exit("Invalid response received getting access_token from url ".$oauth_token_api);
 		}
 		
@@ -146,7 +138,6 @@ class LoginController extends Controller
         if(isset($access_token)){
     
             $ch = curl_init($user_info_api . '?access_token=' . $access_token);
-
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             if (!empty($headers)) curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
             curl_setopt($ch, CURLOPT_POST, false);
@@ -170,8 +161,8 @@ class LoginController extends Controller
             } else if(isset($profile_json_output["error"])){
                 exit($profile_json_output["error"]);
             } else if(isset($profile_json_output)) {
-                $user_name = isset($profile_json_output[$username_attribute]) ?  $profile_json_output[$username_attribute] : '';
-                $email = isset($profile_json_output[$email_attribute]) ?  $profile_json_output[$email_attribute] : '';
+                $user_name = @$profile_json_output[$username_attribute] ?: null;
+                $email = @$profile_json_output[$email_attribute] ?: null;
             } else {
                 exit('Invalid response received from OAuth Provider. Contact your administrator for more details.');
             }
@@ -185,7 +176,16 @@ class LoginController extends Controller
             self::actionTest_config($profile_json_output);
         }
 
+        self::actionLogin_flow($alldata, $user_name, $email);
+
+    }
+
+    public static function actionLogin_flow($alldata, $user_name = null, $email = null){
+
+        $user = new User;
         $user_info = User::find()->email($email)->all();
+        $groupmap = @$alldata['customsettings'] ?: null;
+        $noreg = @$alldata['oauthsettings']['noreg'] ?: null;
         
         if(isset($user_info[0]["admin"]) && $user_info[0]["admin"] == 1 ){
             exit('No Email Address Return!');
@@ -196,10 +196,10 @@ class LoginController extends Controller
             if(Craft::$app->getUser()->getIdentity())
                 return;
             
-            SettingsController::actionCakdd($noreg, $user_info);
+            // SettingsController::actionCakdd($noreg, $user_info);
             $user->username = $user_name;
             $user->email = $email;
-            // $user->active = true;
+            $user->active = true;
             $user->slug = 'mologin';
 
             if ($user->validate(null, false)) {
@@ -212,7 +212,7 @@ class LoginController extends Controller
                         Craft::$app->users->assignUserToGroups($user->id, [$group->id]);
                     }
                 }else{
-                    $userRole = isset($groupmap['userRole'])?$groupmap['userRole']:array('accessCp');
+                    $userRole = @$groupmap['userRole'] ?: array('accessCp');
                     Craft::$app->userPermissions->saveUserPermissions($user->id, $userRole);
                 }
             }
@@ -222,43 +222,42 @@ class LoginController extends Controller
         
         if(isset($user_info)){
             Craft::$app->getUser()->login($user_info[0]);
-            $redirect_url = isset($groupmap['redirect_url'])?$groupmap['redirect_url']:UrlHelper::cpUrl('dashboard');
-            $this->redirect($redirect_url);
+            $redirect_url = @$groupmap['redirect_url'] ?: UrlHelper::cpUrl('dashboard');
+            Craft::$app->getResponse()->redirect($redirect_url);
         }else{ 
             exit("Error in login!");
         }
-
     }
 
-    public function actionTest_config($profile_json_output){
+    public static function actionTest_config($profile_json_output){
 
-        $print = '<div style="color: #3c763d;
-            background-color: #dff0d8; padding:2%;margin-bottom:20px;text-align:center; border:1px solid #AEDB9A; font-size:18pt;">TEST SUCCESSFUL</div>
-            <div style="display:block;text-align:center;margin-bottom:1%;"><img style="width:15%;"src="/includes/images/green_check.png"></div>';
-        $print .= self::actionJson_to_htmltable($profile_json_output);
-        echo $print;
-        exit;
-    }
-    
-    function actionJson_to_htmltable($arr) {
-
-        $str = "<table border='1'><tbody>";
-        foreach ($arr as $key => $val) {
-            $str .= "<tr>";
-            $str .= "<td>$key</td>";
-            $str .= "<td>";
-            if (is_array($val)) {
-                if (!empty($val)) {
-                    $str .= self::actionJson_to_htmltable($val);
+        $print = '<div style="color: #3c763d; background-color: #dff0d8; padding:2%; margin-bottom:20px; text-align:center; border:1px solid #AEDB9A; font-size:18pt;">TEST SUCCESSFUL</div>';
+            $str = "<center><table style='width: 80%;'>";
+            $str .= "<tr><th>Key</th><th>Value</th></tr>";
+            foreach ($profile_json_output as $key => $val) {
+                $str .= "<tr>";
+                $str .= "<td>$key</td>";
+                $str .= "<td>";
+                if (is_array($val)) {
+                    if (!empty($val)) {
+                        $str .= self::actionTest_config($val);
+                    }
+                } else {
+                    $str .= "<strong>$val</strong>";
                 }
-            } else {
-                $str .= "<strong>$val</strong>";
+                $str .= "</td></tr>";
             }
-            $str .= "</td></tr>";
-        }
-        $str .= "</tbody></table>";
-    
-        return $str;
+            $str .= "</table></center>
+            <style>
+                table, th, td {
+                    border: 1px solid black;
+                    border-collapse: collapse;
+                    padding: 10px;
+                    font-size: 15px;
+                }
+            </style>";
+        echo $print .= $str;
+        exit;
     }
 
 }

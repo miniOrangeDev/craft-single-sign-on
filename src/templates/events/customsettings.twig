@@ -25,36 +25,40 @@
             value: customsettings['redirect_url'] ?? ''})
         }}
 
+        {% if craft.userPermissions.getAllPermissions() is defined %}
         <hr>
-        {% set userRoles = craft.userPermissions.getAllPermissions() %}
+            {% set userRoles = craft.userPermissions.getAllPermissions() %}
 
-        <h3>Select User Permission On SSO Registration</h3>
-        {% if userRoles|length %}
-            {% for userRole in userRoles %}
-                {% for role, value in userRole %}
-                    <label for="1">
-                        <input type="checkbox" name="userRole[]" id="userRole" value="{{ role }}" {{ role in customsettings['userRole'] ? "checked" }}>
-                        <span class="checkmark"></span>
-                        {{ value["label"] }}
-                    </label> <br>
-                {% endfor %}    
-            {% endfor %}
+            <h3>Select User Permission On SSO Registration</h3>
+            {% if userRoles|length %}
+                {% for userRole in userRoles %}
+                    {% for role, value in userRole %}
+                        <label for="1">
+                            <input type="checkbox" name="userRole[]" id="userRole" value="{{ role }}" {{ role in customsettings['userRole'] ? "checked" }}>
+                            <span class="checkmark"></span>
+                            {{ value["label"] }}
+                        </label> <br>
+                    {% endfor %}    
+                {% endfor %}
+            {% endif %}
         {% endif %}
 
+        {% if craft.userGroups.getAllGroups() is defined %}
         <hr>
-        {% set userGroups = craft.userGroups.getAllGroups() %}
+            {% set userGroups = craft.userGroups.getAllGroups() %}
 
-        <h3>Select User Group On SSO Registration</h3>
-        {% if userGroups|length %}
-            {% for userGroup in userGroups %}
-                <label for="1">
-                    <input type="checkbox" name="grouphandle[]" id="grouphandle" value="{{ userGroup.handle }}" {{ userGroup.handle in customsettings['grouphandle'] ? "checked" }}>
-                    <span class="checkmark"></span>
-                    <b>{{ userGroup.name }}</b>
-                </label> <br><br>
-            {% endfor %}
-        {% else %}
-            <h2>No User Groups Created Yet!</h2>
+            <h3>Select User Group On SSO Registration</h3>
+            {% if userGroups|length %}
+                {% for userGroup in userGroups %}
+                    <label for="1">
+                        <input type="checkbox" name="grouphandle[]" id="grouphandle" value="{{ userGroup.handle }}" {{ userGroup.handle in customsettings['grouphandle'] ? "checked" }}>
+                        <span class="checkmark"></span>
+                        <b>{{ userGroup.name }}</b>
+                    </label> <br><br>
+                {% endfor %}
+            {% else %}
+                <h2>No User Groups Created Yet!</h2>
+            {% endif %}
         {% endif %}
 
         <div class="buttons">

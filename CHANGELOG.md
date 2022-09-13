@@ -1,5 +1,9 @@
 # Single Sign On Changelog
 
+## 4.0.8 - 2022-09-13
+## Fixed
+- Bug fixes and optimization
+
 ## 4.0.7 - 2022-09-12
 ## Fixed
 - Bug fixes

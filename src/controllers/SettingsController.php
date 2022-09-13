@@ -52,7 +52,7 @@ class SettingsController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['index', 'check', 'delete', 'save', 'oauthsettings', 'oauthattribute', 'samlprovider', 'samlsettings', 'samlattribute', 'customsettings'];
+    protected array|int|bool $allowAnonymous = ['index', 'check', 'delete', 'save', 'oauthsettings', 'oauthattribute', 'samlprovider', 'samlsettings', 'samlattribute', 'customsettings'];
 
     // Public Methods
     // =========================================================================

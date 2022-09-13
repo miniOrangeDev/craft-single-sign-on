@@ -14,6 +14,7 @@ use miniorangedev\craftsinglesignon\Craftsinglesignon;
 use craft\elements\User;
 use craft\helpers\UrlHelper;
 use miniorangedev\craftsinglesignon\controllers\ResourcesController;
+use miniorangedev\craftsinglesignon\controllers\LoginController;
 use miniorangedev\craftsinglesignon\utilities\Utilities;
 use miniorangedev\craftsinglesignon\utilities\SAML2SPResponse;
 use DOMDocument;
@@ -55,7 +56,7 @@ class MethodController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['xhjsdop', 'saml', 'samllogin', 'validSignature'];
+    protected array|int|bool $allowAnonymous = ['xhjsdop', 'saml', 'samllogin', 'validSignature'];
 
     // Public Methods
     // =========================================================================
@@ -93,17 +94,14 @@ class MethodController extends Controller
 
     public function actionSamllogin()
     {
-        $user = new User;
         $state = $email = $firstname = "";
         $profile_output = array();
         $alldata = (ResourcesController::actionDatadb() != null)?ResourcesController::actionDatadb():array();
         $data = isset($alldata['samlsettings'])?$alldata['samlsettings']:"";
         $attr = isset($alldata['samlattribute'])?$alldata['samlattribute']:"";
-        $groupmap = isset($alldata['customsettings'])?$alldata['customsettings']:"";
         $email_attribute = isset($attr['email_attribute'])?$attr['email_attribute']:"";
         $firstname_attribute = isset($attr['firstname_attribute'])?$attr['firstname_attribute']:"";
         $lastname_attribute = isset($attr['lastname_attribute'])?$attr['lastname_attribute']:"";
-        $noreg = isset($data['noreg'])?$data['noreg']:"";
         
         if(array_key_exists('SAMLResponse', $_REQUEST) && !empty($_REQUEST['SAMLResponse'])) {
             
@@ -149,47 +147,12 @@ class MethodController extends Controller
         self::actionvalidSignature($data, $samlResponseXml);
         
         if($state == 'test_config'){
-            self::actionTest_config($profile_output);
-        }
+            LoginController::actionTest_config($profile_output);
 
-        $user_info = User::find()->email($email)->all();
-
-        if(isset($user_info[0]["admin"]) && $user_info[0]["admin"] == 1 ){
-            exit('No Email Address Return!');
-        }
-        
-        if(empty($user_info)){
-            
-            SettingsController::actionCakdd($noreg, $user_info);
-            $user->username = $firstname;
-            $user->email = $email;
-            // $user->active = true;
-            $user->slug = 'mologin';
-
-            if ($user->validate(null, false)) {
-                
-                Craft::$app->getElements()->saveElement($user, false);
-
-                if(isset($groupmap['grouphandle'])){
-                    foreach($groupmap['grouphandle'] as $grouphandle){
-                        $group = Craft::$app->userGroups->getGroupByHandle($grouphandle);
-                        Craft::$app->users->assignUserToGroups($user->id, [$group->id]);
-                    }
-                }else{
-                    $userRole = isset($groupmap['userRole'])?$groupmap['userRole']:array('accessCp');
-                    Craft::$app->userPermissions->saveUserPermissions($user->id, $userRole);
-                }
-            }
-        }
-
-        $user_info = User::find()->email($email)->all();
-
-        if(isset($user_info)){
-            Craft::$app->getUser()->login($user_info[0]); 
-            $redirect_url = isset($groupmap['redirect_url'])?$groupmap['redirect_url']:UrlHelper::cpUrl('dashboard');
-            $this->redirect($redirect_url);
-        }else{
-            exit("Something Went Wrong!");
+        }else if(isset($firstname)&&isset($email)){
+            LoginController::actionLogin_flow($alldata, $firstname, $email);
+        } else {
+            exit("No profile data return from provider!");
         }
 
     }
@@ -197,7 +160,7 @@ class MethodController extends Controller
     public function actionvalidSignature($data, $samlResponseXml)
     {
         $key = 0;
-        $meta_data = isset($data['meta_data'])?$data['meta_data']:"";
+        $meta_data = @$data['meta_data'] ?: null;
         $site_url = (Craft::$app->version>4)?getenv('PRIMARY_SITE_URL'):getenv('PRIMARY_SITE_URL');
         $site_url = preg_replace( "{/$}", "", $site_url);
         $acsUrl = $site_url."/mosinglesignon/samllogin";
@@ -214,7 +177,6 @@ class MethodController extends Controller
             $responseSignatureData = $samlResponse->getSignatureData();
             $assertionSignatureData = current($samlResponse->getAssertions())->getSignatureData();
 
-                /* Validate signature */
                 if(!empty($responseSignatureData)) {
                     $validSignature = Utilities::processResponse($acsUrl, $certfpFromPlugin, $responseSignatureData, $samlResponse, $key, $relayState);
                 }
@@ -255,50 +217,6 @@ class MethodController extends Controller
         }
 
         return null;
-    }
-
-    public function actionTest_config($profile_json_output){
-
-        $print = '<div style="color: #000;
-            background-color: #AEDB9A; padding:2%;margin-bottom:20px;text-align:center; font-size:18pt;">TEST SUCCESSFUL</div>';
-        $print .= self::actionJson_to_htmltable($profile_json_output);
-        echo $print;
-        exit;
-    }
-    
-    public function actionJson_to_htmltable($arr) {
-
-        $str = "<center><table style='width: 80%;'><tbody>";
-        $str .= "<tr><th>Attribute Key</th><th>Attribute Value</th></tr>";
-        foreach ($arr as $key => $val) {
-            $str .= "<tr>";
-            $str .= "<td>$key</td>";
-            $str .= "<td>";
-            if (is_array($val)) {
-                if (!empty($val)) {
-                    $str .= self::actionJson_to_htmltable($val);
-                }
-            } else {
-                $str .= "<strong>$val</strong>";
-            }
-            $str .= "</td></tr>";
-        }
-        $str .= "</tbody></table></center>
-        <style>
-        table, th, td {
-            border: 1px solid black;
-            border-collapse: collapse;
-            padding: 30px;
-            font-size: 18px;
-          }
-        body{
-            font-family:roboto, arial, helvetica, sans-serif;
-            margin: 0px;
-        }
-
-        </style>";
-    
-        return $str;
     }
 
 }

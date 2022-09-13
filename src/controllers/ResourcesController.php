@@ -46,7 +46,7 @@ class ResourcesController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['ptrriejj', 'datadb'];
+    protected array|int|bool $allowAnonymous = ['ptrriejj', 'datadb'];
 
     // Public Methods
     // =========================================================================

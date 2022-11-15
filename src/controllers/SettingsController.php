@@ -173,7 +173,7 @@ class SettingsController extends Controller
     public function actionSamlprovider(): Response
     {
         $attribute = (ResourcesController::actionDatadb('samlprovider') != null)?ResourcesController::actionDatadb('samlprovider'):Craftsinglesignon::$plugin->getSettings();
-        $site_url = (Craft::$app->version>4)?getenv('PRIMARY_SITE_URL'):getenv('PRIMARY_SITE_URL');
+        $site_url = Craft::$app->sites->primarySite->baseUrl;
         $attribute->provider_meta_data = '<?xml version="1.0"?><md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" entityID="'.$site_url.'"><md:SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol" AuthnRequestsSigned="true" WantAssertionsSigned="true"><md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="'.$site_url.'/'.$attribute->provider_logout_url.'"/><md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="'.$site_url.'/'.$attribute->provider_logout_url.'"/><md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="'.$site_url.'/'.$attribute->provider_login_url.'" index="1"/></md:SPSSODescriptor></md:EntityDescriptor>';
    
         return $this->renderTemplate('craft-single-sign-on/events/samlprovider', array(
@@ -404,10 +404,10 @@ class SettingsController extends Controller
             'email' 		=> array(
                 'customerKey' 	=> $customerKey,
                 'fromEmail' 	=> $user_info->email,
-                'bccEmail' 		=> 'pranit@xecurify.com',
+                'bccEmail' 		=> 'shopifysupport@xecurify.com ',
                 'fromName' 		=> 'miniOrange',
-                'toEmail' 		=> 'pranit@xecurify.com',
-                'toName' 		=> 'pranit@xecurify.com',
+                'toEmail' 		=> 'shopifysupport@xecurify.com ',
+                'toName' 		=> 'shopifysupport@xecurify.com ',
                 'subject' 		=> $query,
                 'content' 		=> $content
             ),

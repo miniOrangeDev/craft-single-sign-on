@@ -49,7 +49,7 @@ class LoginController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected array|int|bool $allowAnonymous = ['index', 'callback', 'test_config', 'saml', 'samllogin', 'json_to_htmltable'];
+    protected $allowAnonymous = ['index', 'callback', 'test_config', 'saml', 'samllogin', 'json_to_htmltable'];
 
     // Public Methods
     // =========================================================================
@@ -92,6 +92,7 @@ class LoginController extends Controller
      */
     public function actionCallback()
     {
+        $user = new User;
         $code = Craft::$app->request->getQueryParam('code');
         $alldata = (ResourcesController::actionDatadb() != null)?ResourcesController::actionDatadb():array();
         $data = @$alldata['oauthsettings'] ?: null;
@@ -117,6 +118,10 @@ class LoginController extends Controller
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json'));
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, 'redirect_uri='.urlencode($callback_url).'&grant_type='.$grant_type.'&client_id='.$client_id.'&client_secret='.$client_secret.'&code='.$code);
 		$content = curl_exec($ch);
+		
+                if(curl_error($ch)){
+		        exit( curl_error($ch) );
+		}
 
         if(curl_error($ch)){
             exit(curl_error($ch));
@@ -138,6 +143,7 @@ class LoginController extends Controller
         if(isset($access_token)){
     
             $ch = curl_init($user_info_api . '?access_token=' . $access_token);
+
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             if (!empty($headers)) curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
             curl_setopt($ch, CURLOPT_POST, false);
@@ -199,7 +205,7 @@ class LoginController extends Controller
             SettingsController::actionCakdd($noreg, $user_info);
             $user->username = $user_name;
             $user->email = $email;
-            $user->active = true;
+            // $user->active = true;
             $user->slug = 'mologin';
 
             if ($user->validate(null, false)) {
@@ -227,6 +233,7 @@ class LoginController extends Controller
         }else{ 
             exit("Error in login!");
         }
+
     }
 
     public static function actionTest_config($profile_json_output){
@@ -236,7 +243,7 @@ class LoginController extends Controller
         echo $print;
         exit();
     }
-
+    
     public static function actionJson_to_htmltable($arr) {
 
         $str = "<table>";

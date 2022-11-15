@@ -49,7 +49,7 @@ class LoginController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected array|int|bool $allowAnonymous = ['index', 'callback', 'test_config', 'saml', 'samllogin'];
+    protected array|int|bool $allowAnonymous = ['index', 'callback', 'test_config', 'saml', 'samllogin', 'json_to_htmltable'];
 
     // Public Methods
     // =========================================================================
@@ -167,7 +167,7 @@ class LoginController extends Controller
                 exit('Invalid response received from OAuth Provider. Contact your administrator for more details.');
             }
         }
-        
+                
         if(isset($alldata['test_config'])){
             $alldata['test_config'] = null;
             $site_name = Craft::$app->sites->currentSite->name;
@@ -196,7 +196,7 @@ class LoginController extends Controller
             if(Craft::$app->getUser()->getIdentity())
                 return;
             
-            // SettingsController::actionCakdd($noreg, $user_info);
+            SettingsController::actionCakdd($noreg, $user_info);
             $user->username = $user_name;
             $user->email = $email;
             $user->active = true;
@@ -232,23 +232,29 @@ class LoginController extends Controller
     public static function actionTest_config($profile_json_output){
 
         $print = '<div style="color: #3c763d; background-color: #dff0d8; padding:2%; margin-bottom:20px; text-align:center; border:1px solid #AEDB9A; font-size:18pt;">TEST SUCCESSFUL</div>';
-            $str = "<center><table style='width: 80%;'>";
-            $str .= "<tr><th>Key</th><th>Value</th></tr>";
-            foreach ($profile_json_output as $key => $val) {
-                $str .= "<tr>";
-                $str .= "<td>$key</td>";
-                $str .= "<td>";
-                if (is_array($val)) {
-                    if (!empty($val)) {
-                        $str .= self::actionTest_config($val);
-                    }
-                } else {
-                    $str .= "<strong>$val</strong>";
+        $print .= self::actionJson_to_htmltable($profile_json_output);
+        echo $print;
+        exit();
+    }
+
+    public static function actionJson_to_htmltable($arr) {
+
+        $str = "<table>";
+        foreach ($arr as $key => $val) {
+            $str .= "<tr>";
+            $str .= "<td>$key</td>";
+            $str .= "<td>";
+            if (is_array($val)) {
+                if (!empty($val)) {
+                    $str .= self::actionJson_to_htmltable($val);
                 }
-                $str .= "</td></tr>";
+            } else {
+                $str .= "<strong>$val</strong>";
             }
-            $str .= "</table></center>
-            <style>
+            $str .= "</td></tr>";
+        }
+        $str .= "</table>
+        <style>
                 table, th, td {
                     border: 1px solid black;
                     border-collapse: collapse;
@@ -256,8 +262,8 @@ class LoginController extends Controller
                     font-size: 15px;
                 }
             </style>";
-        echo $print .= $str;
-        exit;
+
+        return $str;
     }
 
 }

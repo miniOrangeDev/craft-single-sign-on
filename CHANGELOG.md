@@ -1,5 +1,9 @@
 # Single Sign On Changelog
 
+## 4.0.11 - 2022-11-15
+## Updated
+- Fixes
+
 ## 4.0.9 - 2022-11-15
 ## Updated
 - Deactivation feedback from on uninstallation

@@ -1,5 +1,9 @@
 # Single Sign On Changelog
 
+## 4.0.12 - 2022-11-15
+## Fixed
+- Fixes
+
 ## 4.0.11 - 2022-11-15
 ## Updated
 - Fixes

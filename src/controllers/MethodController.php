@@ -53,7 +53,7 @@ class MethodController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected array|int|bool $allowAnonymous = ['xhjsdop', 'saml', 'samllogin', 'validSignature'];
+    protected $allowAnonymous = ['xhjsdop', 'saml', 'samllogin', 'validSignature'];
 
     // Public Methods
     // =========================================================================
@@ -91,14 +91,17 @@ class MethodController extends Controller
 
     public function actionSamllogin()
     {
+        $user = new User;
         $state = $email = $firstname = "";
         $profile_output = array();
         $alldata = (ResourcesController::actionDatadb() != null)?ResourcesController::actionDatadb():array();
         $data = isset($alldata['samlsettings'])?$alldata['samlsettings']:"";
         $attr = isset($alldata['samlattribute'])?$alldata['samlattribute']:"";
+        $groupmap = isset($alldata['customsettings'])?$alldata['customsettings']:"";
         $email_attribute = isset($attr['email_attribute'])?$attr['email_attribute']:"";
         $firstname_attribute = isset($attr['firstname_attribute'])?$attr['firstname_attribute']:"";
         $lastname_attribute = isset($attr['lastname_attribute'])?$attr['lastname_attribute']:"";
+        $noreg = isset($data['noreg'])?$data['noreg']:"";
         
         if(array_key_exists('SAMLResponse', $_REQUEST) && !empty($_REQUEST['SAMLResponse'])) {
             
@@ -145,11 +148,46 @@ class MethodController extends Controller
         
         if($state == 'test_config'){
             LoginController::actionTest_config($profile_output);
+        }
 
-        }else if(isset($firstname)&&isset($email)){
-            LoginController::actionLogin_flow($alldata, $firstname, $email);
-        } else {
-            exit("No profile data return from provider!");
+        $user_info = User::find()->email($email)->all();
+
+        if(isset($user_info[0]["admin"]) && $user_info[0]["admin"] == 1 ){
+            exit('No Email Address Return!');
+        }
+        
+        if(empty($user_info)){
+            
+            SettingsController::actionCakdd($noreg, $user_info);
+            $user->username = $firstname;
+            $user->email = $email;
+            // $user->active = true;
+            $user->slug = 'mologin';
+
+            if ($user->validate(null, false)) {
+                
+                Craft::$app->getElements()->saveElement($user, false);
+
+                if(isset($groupmap['grouphandle'])){
+                    foreach($groupmap['grouphandle'] as $grouphandle){
+                        $group = Craft::$app->userGroups->getGroupByHandle($grouphandle);
+                        Craft::$app->users->assignUserToGroups($user->id, [$group->id]);
+                    }
+                }else{
+                    $userRole = isset($groupmap['userRole'])?$groupmap['userRole']:array('accessCp');
+                    Craft::$app->userPermissions->saveUserPermissions($user->id, $userRole);
+                }
+            }
+        }
+
+        $user_info = User::find()->email($email)->all();
+
+        if(isset($user_info)){
+            Craft::$app->getUser()->login($user_info[0]); 
+            $redirect_url = isset($groupmap['redirect_url'])?$groupmap['redirect_url']:UrlHelper::cpUrl('dashboard');
+            $this->redirect($redirect_url);
+        }else{
+            exit("Something Went Wrong!");
         }
 
     }
@@ -172,6 +210,7 @@ class MethodController extends Controller
             $samlResponse = new SAML2SPResponse($samlResponseXml, $latest_private_key);
             $responseSignatureData = $samlResponse->getSignatureData();
             $assertionSignatureData = current($samlResponse->getAssertions())->getSignatureData();
+
 
                 if(!empty($responseSignatureData)) {
                     $validSignature = Utilities::processResponse($acsUrl, $certfpFromPlugin, $responseSignatureData, $samlResponse, $key, $relayState);

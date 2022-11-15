@@ -74,21 +74,21 @@ class Craftsinglesignon extends Plugin
      *
      * @var string
      */
-    public string $schemaVersion = '1.0.0';
+    public $schemaVersion = '1.0.0';
 
     /**
      * Set to `true` if the plugin should have a settings view in the control panel.
      *
      * @var bool
      */
-    public bool $hasCpSettings = true;
+    public $hasCpSettings = true;
 
     /**
      * Set to `true` if the plugin should have its own section (main nav item) in the control panel.
      *
      * @var bool
      */
-    public bool $hasCpSection = true;
+    public $hasCpSection = true;
 
     // Public Methods
     // =========================================================================
@@ -197,7 +197,7 @@ class Craftsinglesignon extends Plugin
             Plugins::EVENT_BEFORE_UNINSTALL_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin === $this) {
-                    self::getNotify();
+                    self::getNotify($event);
                 }
             }
         );
@@ -298,7 +298,7 @@ class Craftsinglesignon extends Plugin
         return $item;
     }
 
-    public function getNotify()
+    public function getNotify($event)
     { 
         Craft::$app->runAction('craft-single-sign-on/settings/deactivation');
     }

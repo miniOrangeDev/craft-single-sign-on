@@ -12,15 +12,12 @@ namespace miniorangedev\craftsinglesignon\controllers;
 
 use miniorangedev\craftsinglesignon\Craftsinglesignon;
 use craft\elements\User;
-use craft\helpers\UrlHelper;
 use miniorangedev\craftsinglesignon\controllers\ResourcesController;
 use miniorangedev\craftsinglesignon\controllers\LoginController;
 use miniorangedev\craftsinglesignon\utilities\Utilities;
 use miniorangedev\craftsinglesignon\utilities\SAML2SPResponse;
 use DOMDocument;
 use DOMXPath;
-
-// include_once dirname(dirname(__FILE__)) . '/utilities/Response.php';
 
 use Craft;
 use craft\web\Controller;
@@ -81,8 +78,8 @@ class MethodController extends Controller
         $data = (ResourcesController::actionDatadb('samlsettings') != null)?ResourcesController::actionDatadb('samlsettings'):array();
         $login_url = isset($data['login_url'])?$data['login_url']:"";
         $issuer = isset($data['issuer'])?$data['issuer']:"";
-        $site_url = (Craft::$app->version>4)?getenv('PRIMARY_SITE_URL'):getenv('PRIMARY_SITE_URL');
-        $acsUrl = $site_url."/mosinglesignon/samllogin";
+        $site_url = Craft::$app->sites->primarySite->baseUrl;
+        $acsUrl = $site_url."mosinglesignon/samllogin";
         $force_authn = false;
         $sso_binding_type = 'HttpRedirect';
         $saml_nameid_format = '1.1:nameid-format:unspecified';
@@ -161,9 +158,8 @@ class MethodController extends Controller
     {
         $key = 0;
         $meta_data = @$data['meta_data'] ?: null;
-        $site_url = (Craft::$app->version>4)?getenv('PRIMARY_SITE_URL'):getenv('PRIMARY_SITE_URL');
-        $site_url = preg_replace( "{/$}", "", $site_url);
-        $acsUrl = $site_url."/mosinglesignon/samllogin";
+        $site_url = Craft::$app->sites->primarySite->baseUrl;
+        $acsUrl = $site_url."mosinglesignon/samllogin";
 
         if(array_key_exists('RelayState', $_POST) && !empty( $_POST['RelayState'] ) && $_POST['RelayState'] != '/') {
             $relayState = $_POST['RelayState'];

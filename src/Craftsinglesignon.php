@@ -128,6 +128,7 @@ class Craftsinglesignon extends Plugin
                 $event->rules['mosinglesignon/delete'] = 'craft-single-sign-on/settings/delete';
                 $event->rules['mosinglesignon/issuer'] = 'craft-single-sign-on/method/saml';
                 $event->rules['mosinglesignon/samllogin'] = 'craft-single-sign-on/method/samllogin';
+                $event->rules['mosinglesignon/message'] = 'craft-single-sign-on/settings/message';
             }
         );
 
@@ -186,6 +187,17 @@ class Craftsinglesignon extends Plugin
             function (PluginEvent $event) {
                 if ($event->plugin === $this) {
                     
+                }
+            }
+        );
+
+        // Do something after we're uninstalled
+        Event::on(
+            Plugins::class,
+            Plugins::EVENT_BEFORE_UNINSTALL_PLUGIN,
+            function (PluginEvent $event) {
+                if ($event->plugin === $this) {
+                    self::getNotify();
                 }
             }
         );
@@ -284,6 +296,11 @@ class Craftsinglesignon extends Plugin
             'custom_settings' => ['label' => 'Settings', 'url' => 'craft-single-sign-on/custom-settings'],
         ];
         return $item;
+    }
+
+    public function getNotify()
+    { 
+        Craft::$app->runAction('craft-single-sign-on/settings/deactivation');
     }
 
 }

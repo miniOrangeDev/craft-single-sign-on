@@ -53,7 +53,7 @@ class MethodController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['xhjsdop', 'saml', 'samllogin', 'validSignature'];
+    protected array|int|bool $allowAnonymous = ['xhjsdop', 'saml', 'samllogin', 'validSignature'];
 
     // Public Methods
     // =========================================================================

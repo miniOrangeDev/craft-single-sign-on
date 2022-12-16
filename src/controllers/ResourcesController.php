@@ -46,7 +46,7 @@ class ResourcesController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['ptrriejj', 'datadb'];
+    protected array|int|bool $allowAnonymous = ['ptrriejj', 'datadb'];
 
     // Public Methods
     // =========================================================================
@@ -68,14 +68,11 @@ class ResourcesController extends Controller
 
     public static function actionDatadb($offset = null)
     {
-        $prefix = (Craft::$app->version>4)?getenv('CRAFT_DB_TABLE_PREFIX'):getenv('DB_TABLE_PREFIX');
-        if($prefix == null){
-            return false;
-        }
+
         $site_name = Craft::$app->sites->currentSite->name;
         $db_select = (new \craft\db\Query()) 
         ->select(['options']) 
-        ->from($prefix.'mologin_config') 
+        ->from('{{%mologin_config}}')
         ->where(['name' => $site_name]) 
         ->one();
 
@@ -89,20 +86,17 @@ class ResourcesController extends Controller
 
     public static function actionDatadelete($offset = null)
     {
-        $prefix = (Craft::$app->version>4)?getenv('CRAFT_DB_TABLE_PREFIX'):getenv('DB_TABLE_PREFIX');
-        if($prefix == null){
-            return false;
-        }
+
         $site_name = Craft::$app->sites->currentSite->name;
         $db_select = (new \craft\db\Query()) 
             ->select(['options']) 
-            ->from($prefix.'mologin_config') 
+            ->from('{{%mologin_config}}')
             ->where(['name' => $site_name]) 
             ->one();
 
         $alldata = (isset($db_select['options']))?json_decode($db_select['options'],true):'';
         $alldata[$offset] = array();
-        Craft::$app->db->createCommand()->update($prefix.'mologin_config', ['options' => json_encode($alldata)], ['name' => $site_name])->execute();
+        Craft::$app->db->createCommand()->update('{{%mologin_config}}', ['options' => json_encode($alldata)], ['name' => $site_name])->execute();
         
         return 1;
     }

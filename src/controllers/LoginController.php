@@ -49,7 +49,7 @@ class LoginController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['index', 'callback', 'test_config', 'saml', 'samllogin', 'json_to_htmltable'];
+    protected array|int|bool $allowAnonymous = ['index', 'callback', 'test_config', 'saml', 'samllogin', 'json_to_htmltable'];
 
     // Public Methods
     // =========================================================================
